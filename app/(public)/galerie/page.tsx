@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { SPECTACLES } from "@/data/spectacles";
+import VideoSection from "@/components/galerie/VideoSection";
 
 export const metadata: Metadata = {
   title: "Galerie — L'ACAP",
@@ -30,6 +31,9 @@ export default function GaleriePage() {
       </div>
 
       <section style={{ ...S, padding: "64px 48px" }}>
+        {/* Section vidéos archives YouTube */}
+        <VideoSection />
+
         {/* Saison en cours */}
         <div style={{ marginBottom: 40 }}>
           <span className="kicker" style={{ marginBottom: 8, display: "block" }}>Saison 2025–2026</span>
