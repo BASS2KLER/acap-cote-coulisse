@@ -2,26 +2,124 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,800;9..144,900&family=Nunito:wght@400;500;600;700;800&display=swap');
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Couleurs de base */
+  --creme:         #fbf6ec;
+  --creme-pale:    #fefaf2;
+  --creme-deep:    #f3ead9;
+  --encre:         #2a2118;
+  --encre-douce:   #4d4031;
+  --filet:         #e6dcc7;
+
+  /* Mouvement */
+  --ease-bounce: cubic-bezier(.34, 1.56, .64, 1);
+  --ease-soft:   cubic-bezier(.4, 0, .2, 1);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  html {
+    font-size: 18px;
+    scroll-behavior: smooth;
   }
-}
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-}
+  body {
+    background-color: #fbf6ec;
+    color: #2a2118;
+    font-family: var(--font-nunito, "Nunito", system-ui, sans-serif);
+    font-weight: 400;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    /* Texture papier subtile */
+    background-image:
+      radial-gradient(circle at 10% 20%, rgba(74,64,49,0.025) 1px, transparent 1px),
+      radial-gradient(circle at 80% 70%, rgba(74,64,49,0.02) 1px, transparent 1px);
+    background-size: 40px 40px, 60px 60px;
+  }
 
-@layer utilities {
-  .text-balance {
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-fraunces, "Fraunces", Georgia, serif);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
     text-wrap: balance;
+    color: #2a2118;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  *:focus-visible {
+    outline: 3px solid #f3c13a;
+    outline-offset: 3px;
+    border-radius: 6px;
   }
 }
+
+@layer components {
+  /* Bouton principal */
+  .btn-acap {
+    @apply inline-flex items-center justify-center gap-2;
+    @apply font-body font-bold text-lg;
+    @apply px-7 py-4 rounded-pill;
+    @apply border-[3px] border-encre;
+    @apply bg-tomate-500 text-creme-pale;
+    @apply cursor-pointer no-underline;
+    @apply shadow-encre;
+    @apply transition-all duration-150;
+    transition-timing-function: cubic-bezier(.34, 1.56, .64, 1);
+  }
+  .btn-acap:hover {
+    @apply shadow-encre-lg;
+    transform: translate(-2px, -2px) rotate(-1deg);
+  }
+  .btn-acap:active {
+    @apply shadow-none;
+    transform: translate(2px, 2px);
+  }
+
+  .btn-acap--ghost {
+    @apply bg-transparent text-encre;
+  }
+  .btn-acap--soleil {
+    @apply bg-soleil-400 text-soleil-ink;
+  }
+  .btn-acap--pomme {
+    @apply bg-pomme-500 text-creme-pale;
+  }
+  .btn-acap--ciel {
+    @apply bg-ciel-500 text-creme-pale;
+  }
+
+  /* Chip / tag genre */
+  .chip-acap {
+    @apply inline-flex items-center gap-1;
+    @apply font-body font-bold text-sm;
+    @apply px-3 py-1 rounded-pill;
+    @apply border-2 border-encre;
+    @apply bg-creme-pale text-encre;
+  }
+
+  /* Carte */
+  .card-acap {
+    @apply bg-creme-pale;
+    @apply border-[2px] border-encre rounded-xl;
+    @apply p-5 shadow-card;
+  }
+}
+
+/* Champ admin réutilisable */
+.admin-input {
+  @apply text-base px-4 py-3 border-[2.5px] border-encre rounded-lg bg-creme font-body w-full;
+  @apply focus:outline-none focus:ring-2 focus:ring-soleil-500;
+  font-family: var(--font-nunito, Nunito, sans-serif);
+}
+
+/* Scrollbar discrète style papier */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: #f3ead9; }
+::-webkit-scrollbar-thumb { background: #e6dcc7; border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: #8a7d6a; }
