@@ -16,7 +16,7 @@ export default function InfoBandeauSection() {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.5 }}
-      className="max-w-page mx-auto px-6 -mt-4 mb-8"
+      className="relative z-10 max-w-page mx-auto px-6 -mt-4 mb-8"
     >
       <div className="bg-soleil-100 border-[3px] border-encre rounded-xl shadow-soleil grid grid-cols-2 md:grid-cols-4 gap-0 divide-x-2 divide-encre overflow-hidden">
         {INFOS.map((info) => (
