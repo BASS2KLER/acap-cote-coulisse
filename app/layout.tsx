@@ -17,6 +17,8 @@ const nunito = Nunito({
   display: "swap",
 });
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "L'ACAP — Théâtre à Saint-Prix",
   description:
