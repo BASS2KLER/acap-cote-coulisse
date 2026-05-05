@@ -5,9 +5,8 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { getToneClasses, isComplet, getPlacesLabel } from "@/lib/utils";
+import { getToneVars, isComplet, getPlacesLabel } from "@/lib/utils";
 import type { ToneCouleur, GenreSpectacle } from "@/lib/types";
-import Chip from "@/components/ui/Chip";
 import ModalReservation from "@/components/spectacles/ModalReservation";
 
 export default function SpectacleDetailPage() {
@@ -16,7 +15,7 @@ export default function SpectacleDetailPage() {
 
   if (raw === undefined) {
     return (
-      <div className="max-w-page mx-auto px-6 py-20 text-center text-encre-douce">
+      <div style={{ maxWidth: 1280, margin: "0 auto", padding: "80px 48px", textAlign: "center", fontFamily: "var(--font-worksans)", color: "var(--ink-muted)", fontStyle: "italic" }}>
         Chargement…
       </div>
     );
@@ -33,189 +32,131 @@ export default function SpectacleDetailPage() {
     tone: raw.tone as ToneCouleur,
   };
 
-  const tone = getToneClasses(spectacle.tone);
+  const { accentDeep, accentWash, accentClass } = getToneVars(spectacle.tone);
   const complet = isComplet(spectacle.places);
 
   return (
-    <>
-      {/* En-tête colorée */}
-      <div className={`${tone.bgLight} border-b-2 border-encre py-12 md:py-16`}>
-        <div className="max-w-page mx-auto px-6">
-          <Link
-            href="/spectacles"
-            className="inline-flex items-center gap-2 text-sm font-body font-bold text-encre-douce hover:text-encre mb-6 no-underline"
-          >
+    <div className={accentClass}>
+      {/* En-tête */}
+      <div style={{ background: accentWash, borderBottom: "1px solid var(--ink-line)", padding: "40px 0" }}>
+        <div style={{ maxWidth: 1280, margin: "0 auto", padding: "0 48px" }}>
+          <Link href="/spectacles" style={{ fontFamily: "var(--font-worksans)", fontSize: "0.8125rem", color: "var(--ink-soft)", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 6, marginBottom: 24 }}>
             ← Tous les spectacles
           </Link>
 
-          <div className="flex flex-wrap gap-2 mb-4">
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 16 }}>
             {spectacle.genres.map((g) => (
-              <Chip key={g} label={g} genre={g} />
+              <span key={g} style={{ display: "inline-block", fontFamily: "var(--font-worksans)", fontSize: "0.6875rem", fontWeight: 600, textTransform: "uppercase" as const, letterSpacing: "0.14em", color: accentDeep, background: "rgba(255,255,255,0.5)", border: `1px solid ${accentDeep}`, padding: "3px 10px", borderRadius: 999 }}>
+                {g}
+              </span>
             ))}
             {complet && (
-              <span className="chip-acap bg-encre text-creme-pale">Complet</span>
+              <span style={{ display: "inline-block", fontFamily: "var(--font-worksans)", fontSize: "0.6875rem", fontWeight: 600, textTransform: "uppercase" as const, letterSpacing: "0.14em", color: "var(--paper)", background: "var(--ink)", padding: "3px 10px", borderRadius: 999 }}>
+                Complet
+              </span>
             )}
           </div>
 
-          <h1
-            className="font-display font-black mb-2 text-encre"
-            style={{
-              fontFamily: "var(--font-fraunces, Fraunces, serif)",
-              fontSize: "clamp(2.5rem, 6vw, 4.5rem)",
-              lineHeight: 1,
-              color: `var(--${spectacle.tone}-700)`,
-            }}
-          >
+          <h1 style={{ fontFamily: "var(--font-fraunces, Fraunces, serif)", fontStyle: "italic", fontWeight: 600, fontSize: "clamp(2.5rem, 6vw, 4.5rem)", lineHeight: 1, letterSpacing: "-0.025em", color: "var(--ink)", margin: "0 0 8px" }}>
             {spectacle.titre}
           </h1>
-          <p
-            className="text-xl md:text-2xl italic text-encre-douce mb-6"
-            style={{ fontFamily: "var(--font-fraunces, Fraunces, serif)" }}
-          >
+          <p style={{ fontFamily: "var(--font-fraunces, Fraunces, serif)", fontStyle: "italic", fontSize: "1.125rem", color: "var(--ink-soft)", margin: "0 0 24px" }}>
             {spectacle.auteur}
           </p>
 
-          <div className="flex flex-wrap gap-6 font-body text-base text-encre">
-            <span>
-              📅 <strong>{spectacle.date} à {spectacle.heure}</strong>
-            </span>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "8px 24px", fontFamily: "var(--font-worksans)", fontSize: "0.875rem", color: "var(--ink-soft)" }}>
+            <span>📅 <strong style={{ color: "var(--ink)" }}>{spectacle.date} à {spectacle.heure}</strong></span>
             <span>📍 {spectacle.lieu}</span>
             <span>⏱ {spectacle.duree}</span>
-            <span>
-              🎟 <strong>{spectacle.prix}{spectacle.prixReduit && ` / ${spectacle.prixReduit}`}</strong>
-            </span>
+            <span>🎟 <strong style={{ color: "var(--ink)" }}>{spectacle.prix}{spectacle.prixReduit && ` / ${spectacle.prixReduit}`}</strong></span>
             {spectacle.pmr && <span>♿ Accès PMR</span>}
           </div>
         </div>
       </div>
 
-      {/* Corps de la page */}
-      <div className="max-w-page mx-auto px-6 py-12 md:py-16 grid md:grid-cols-[1fr_360px] gap-12 items-start">
-        {/* Description */}
+      {/* Corps */}
+      <div style={{ maxWidth: 1280, margin: "0 auto", padding: "48px 48px 80px", display: "grid", gridTemplateColumns: "1fr 360px", gap: 56, alignItems: "start" }}>
+
+        {/* Description + galerie */}
         <div>
-          <h2
-            className="font-display font-bold text-2xl md:text-3xl text-encre mb-5"
-            style={{ fontFamily: "var(--font-fraunces, Fraunces, serif)" }}
-          >
+          <h2 style={{ fontFamily: "var(--font-fraunces, Fraunces, serif)", fontWeight: 500, fontSize: "1.75rem", lineHeight: 1.1, color: "var(--ink)", margin: "0 0 20px" }}>
             Le spectacle
           </h2>
-          <p className="text-base md:text-lg text-encre leading-relaxed max-w-prose whitespace-pre-line">
+          <p style={{ fontFamily: "var(--font-worksans)", fontSize: "1.0625rem", lineHeight: 1.65, color: "var(--ink-soft)", maxWidth: "56ch", whiteSpace: "pre-line", margin: "0 0 40px" }}>
             {spectacle.description}
           </p>
 
-          {spectacle.lienVideo && (
-            <div className="mt-8">
-              <h3
-                className="font-display font-bold text-xl text-encre mb-3"
-                style={{ fontFamily: "var(--font-fraunces, Fraunces, serif)" }}
-              >
-                Avant-goût
-              </h3>
-              <div className="rounded-xl border-2 border-encre overflow-hidden bg-encre aspect-video flex items-center justify-center">
-                <div className="text-creme-pale text-center px-8">
-                  <div className="text-5xl mb-3">🎭</div>
-                  <p className="text-base opacity-70">Bande-annonce à venir</p>
+          {/* Galerie */}
+          <h3 style={{ fontFamily: "var(--font-fraunces, Fraunces, serif)", fontWeight: 500, fontSize: "1.25rem", color: "var(--ink)", margin: "0 0 16px" }}>
+            Galerie
+          </h3>
+          {spectacle.galerie.length > 0 ? (
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10 }}>
+              {spectacle.galerie.map((url, i) => (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img key={i} src={url} alt="" style={{ width: "100%", aspectRatio: "1", objectFit: "cover", borderRadius: 4, border: "1px solid var(--ink-line)" }} />
+              ))}
+            </div>
+          ) : (
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10 }}>
+              {[0, 1, 2].map((i) => (
+                <div key={i} style={{ background: accentWash, border: `1px solid ${accentDeep}`, borderRadius: 4, aspectRatio: "1", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <span style={{ fontSize: "2rem", opacity: 0.4 }}>{spectacle.emoji}</span>
                 </div>
-              </div>
+              ))}
             </div>
           )}
-
-          {/* Galerie */}
-          <div className="mt-8">
-            <h3
-              className="font-display font-bold text-xl text-encre mb-4"
-              style={{ fontFamily: "var(--font-fraunces, Fraunces, serif)" }}
-            >
-              Galerie
-            </h3>
-            {spectacle.galerie.length > 0 ? (
-              <div className="grid grid-cols-3 gap-3">
-                {spectacle.galerie.map((url, i) => (
-                  <img
-                    key={i}
-                    src={url}
-                    alt=""
-                    className="rounded-lg border-2 border-encre aspect-square object-cover"
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className="grid grid-cols-3 gap-3">
-                {[tone.bgLight, tone.bg, tone.bgLight].map((bg, i) => (
-                  <div
-                    key={i}
-                    className={`${bg} border-2 border-encre rounded-lg aspect-square flex items-center justify-center`}
-                  >
-                    <span className="text-3xl opacity-40">{spectacle.emoji}</span>
-                  </div>
-                ))}
-              </div>
-            )}
-            {spectacle.galerie.length === 0 && (
-              <p className="text-sm text-gris-poussiere mt-2">Photos de répétitions à venir.</p>
-            )}
-          </div>
+          {spectacle.galerie.length === 0 && (
+            <p style={{ fontFamily: "var(--font-worksans)", fontSize: "0.8125rem", color: "var(--ink-muted)", marginTop: 8, fontStyle: "italic" }}>Photos de répétitions à venir.</p>
+          )}
         </div>
 
-        {/* Panneau réservation sticky */}
-        <aside className="sticky top-24">
-          <div className="bg-creme-pale border-[3px] border-encre rounded-xl p-6 shadow-encre-xl">
-            <h2
-              className="font-display font-bold text-2xl text-encre mb-5"
-              style={{ fontFamily: "var(--font-fraunces, Fraunces, serif)" }}
-            >
+        {/* Panneau réservation */}
+        <aside style={{ position: "sticky", top: 80 }}>
+          <div style={{ background: "#FBF7EC", border: "1px solid var(--ink-line)", borderRadius: 6, padding: 28, boxShadow: "8px 8px 0 var(--paper-deep)" }}>
+            <h2 style={{ fontFamily: "var(--font-fraunces, Fraunces, serif)", fontWeight: 600, fontSize: "1.25rem", color: "var(--ink)", margin: "0 0 20px" }}>
               On vous garde une place ?
             </h2>
 
-            <div className="space-y-3 mb-6 text-sm">
-              <div className="flex justify-between py-2 border-b border-filet">
-                <span className="text-encre-douce">Date</span>
-                <span className="font-bold">{spectacle.date}</span>
-              </div>
-              <div className="flex justify-between py-2 border-b border-filet">
-                <span className="text-encre-douce">Heure</span>
-                <span className="font-bold">{spectacle.heure}</span>
-              </div>
-              <div className="flex justify-between py-2 border-b border-filet">
-                <span className="text-encre-douce">Lieu</span>
-                <span className="font-bold">{spectacle.lieu}</span>
-              </div>
-              <div className="flex justify-between py-2 border-b border-filet">
-                <span className="text-encre-douce">Tarif adulte</span>
-                <span className="font-bold">{spectacle.prix}</span>
-              </div>
-              <div className="flex justify-between py-2">
-                <span className="text-encre-douce">Tarif réduit</span>
-                <span className="font-bold">{spectacle.prixReduit}</span>
-              </div>
+            <div style={{ marginBottom: 24 }}>
+              {[
+                { label: "Date", value: spectacle.date },
+                { label: "Heure", value: spectacle.heure },
+                { label: "Lieu", value: spectacle.lieu },
+                { label: "Tarif adulte", value: spectacle.prix },
+                { label: "Tarif réduit", value: spectacle.prixReduit },
+              ].map(({ label, value }) => (
+                <div key={label} style={{ display: "flex", justifyContent: "space-between", padding: "8px 0", borderBottom: "1px solid var(--ink-line)", fontFamily: "var(--font-worksans)", fontSize: "0.875rem" }}>
+                  <span style={{ color: "var(--ink-muted)" }}>{label}</span>
+                  <span style={{ fontWeight: 600, color: "var(--ink)" }}>{value}</span>
+                </div>
+              ))}
             </div>
 
             {!complet ? (
               <>
                 {spectacle.places <= 15 && (
-                  <p className="text-sm font-bold text-tomate-600 mb-4">
+                  <p style={{ fontFamily: "var(--font-worksans)", fontSize: "0.875rem", fontWeight: 600, color: "var(--rose-deep)", margin: "0 0 16px" }}>
                     ⚠️ {getPlacesLabel(spectacle.places)}
                   </p>
                 )}
                 <ModalReservation spectacle={spectacle} />
               </>
             ) : (
-              <div className="text-center py-4">
-                <div className="text-3xl mb-2">😢</div>
-                <p className="font-bold text-base text-encre">Ce spectacle est complet.</p>
-                <p className="text-sm text-encre-douce mt-1">
-                  Contactez-nous pour être sur liste d'attente.
-                </p>
+              <div style={{ textAlign: "center", padding: "16px 0" }}>
+                <div style={{ fontSize: "2rem", marginBottom: 8 }}>😢</div>
+                <p style={{ fontFamily: "var(--font-worksans)", fontWeight: 600, fontSize: "0.9375rem", color: "var(--ink)", margin: "0 0 6px" }}>Ce spectacle est complet.</p>
+                <p style={{ fontFamily: "var(--font-worksans)", fontSize: "0.8125rem", color: "var(--ink-muted)", margin: 0 }}>Contactez-nous pour être sur liste d'attente.</p>
               </div>
             )}
 
-            <div className="mt-5 pt-4 border-t border-filet text-sm text-encre-douce">
-              <p>📞 01 39 91 XX XX</p>
-              <p className="text-xs mt-1 text-gris-poussiere">Le mardi soir uniquement</p>
+            <div style={{ marginTop: 20, paddingTop: 16, borderTop: "1px solid var(--ink-line)", fontFamily: "var(--font-worksans)", fontSize: "0.8125rem", color: "var(--ink-muted)" }}>
+              <p style={{ margin: "0 0 2px" }}>📞 06 81 67 04 98 (Hélène)</p>
+              <p style={{ margin: 0 }}>📞 06 33 62 20 42 (Florence)</p>
             </div>
           </div>
         </aside>
       </div>
-    </>
+    </div>
   );
 }

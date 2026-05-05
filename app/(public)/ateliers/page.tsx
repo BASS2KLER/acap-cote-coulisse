@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import Section, { SectionTitre } from "@/components/ui/Section";
 
 const BIENFAITS = [
   { emoji: "💪", titre: "Confiance en soi", desc: "Apprendre à s'affirmer, à oser, à occuper l'espace." },
@@ -14,223 +13,224 @@ const BIENFAITS = [
 ];
 
 const ATELIERS = [
-  { jour: "Lundi", horaire: "20h30 – 22h30", label: "Adultes", tone: "tomate", emoji: "🎭" },
-  { jour: "Mardi", horaire: "18h – 19h30", label: "Primaires / collège", tone: "soleil", emoji: "🌟" },
-  { jour: "Mardi", horaire: "20h15 – 22h45", label: "Classique avancés", tone: "aubergine", emoji: "📜" },
-  { jour: "Mercredi", horaire: "16h45 – 17h30", label: "Découverte enfants", tone: "pomme", emoji: "🌱" },
-  { jour: "Mercredi", horaire: "18h – 20h", label: "Atelier oral", tone: "ciel", emoji: "🗣" },
-  { jour: "Mercredi", horaire: "20h30 – 22h30", label: "Adultes", tone: "rose", emoji: "🎭" },
-  { jour: "Sur demande", horaire: "À convenir", label: "Coaching individuel", tone: "tomate", emoji: "🎯" },
+  { jour: "Lundi",    horaire: "20h30 – 22h30", label: "Adultes",            accent: "rose" },
+  { jour: "Mardi",   horaire: "18h – 19h30",   label: "Primaires / collège", accent: "moutarde" },
+  { jour: "Mardi",   horaire: "20h15 – 22h45", label: "Classique avancés",   accent: "lavande" },
+  { jour: "Mercredi",horaire: "16h45 – 17h30", label: "Découverte enfants",  accent: "mousse" },
+  { jour: "Mercredi",horaire: "18h – 20h",     label: "Atelier oral",        accent: "lavande" },
+  { jour: "Mercredi",horaire: "20h30 – 22h30", label: "Adultes",             accent: "rose" },
+  { jour: "Sur demande", horaire: "À convenir", label: "Coaching individuel", accent: "moutarde" },
 ];
 
-const TONE_COLORS: Record<string, { bg: string; border: string; text: string }> = {
-  tomate:   { bg: "bg-tomate-100",   border: "border-tomate-400",   text: "text-tomate-700" },
-  soleil:   { bg: "bg-soleil-100",   border: "border-soleil-400",   text: "text-soleil-700" },
-  aubergine:{ bg: "bg-aubergine-100",border: "border-aubergine-400",text: "text-aubergine-700" },
-  pomme:    { bg: "bg-pomme-100",    border: "border-pomme-400",    text: "text-pomme-700" },
-  ciel:     { bg: "bg-ciel-100",     border: "border-ciel-400",     text: "text-ciel-700" },
-  rose:     { bg: "bg-rose-100",     border: "border-rose-400",     text: "text-rose-700" },
+const TARIFS = [
+  { duree: "45 minutes", tarif: "60 €" },
+  { duree: "1h30",       tarif: "117 €" },
+  { duree: "2h",         tarif: "132 €" },
+  { duree: "2h30",       tarif: "165 €" },
+];
+
+const S: React.CSSProperties = {
+  maxWidth: 1280,
+  margin: "0 auto",
+  padding: "0 48px",
 };
 
 export default function AteliersPage() {
   return (
     <>
-      {/* En-tête */}
-      <div className="bg-tomate-100 border-b-2 border-encre py-12 md:py-16">
-        <div className="max-w-page mx-auto px-6">
-          <span className="chip-acap bg-tomate-200 text-tomate-700 inline-flex mb-4">🎭 Ateliers</span>
-          <h1
-            className="font-display font-black text-4xl md:text-5xl text-encre mb-3"
-            style={{ fontFamily: "var(--font-fraunces, Fraunces, serif)" }}
-          >
+      {/* En-tête éditorial */}
+      <div style={{ borderBottom: "1px solid var(--ink-line)", padding: "48px 0" }}>
+        <div style={S}>
+          <span className="kicker" style={{ marginBottom: 12, display: "block", color: "var(--rose-deep)" }}>
+            🎭 Ateliers
+          </span>
+          <h1 style={{
+            fontFamily: "var(--font-fraunces, Fraunces, serif)",
+            fontWeight: 600,
+            fontSize: "clamp(2.5rem, 5vw, 4rem)",
+            lineHeight: 1,
+            letterSpacing: "-0.025em",
+            color: "var(--ink)",
+            margin: "0 0 16px",
+          }}>
             Les ateliers de théâtre
           </h1>
-          <p className="text-lg text-encre-douce max-w-prose">
+          <p style={{ fontFamily: "var(--font-worksans)", fontSize: "1.0625rem", lineHeight: 1.6, color: "var(--ink-soft)", maxWidth: "52ch", margin: 0 }}>
             Pour adultes et enfants, tous niveaux. Venez essayer — la première séance est offerte.
           </p>
         </div>
       </div>
 
-      {/* Ce que vous allez travailler */}
-      <Section>
-        <SectionTitre
-          titre="Ce que vous allez développer"
-          sous="Le théâtre, c'est bien plus que jouer la comédie"
-          centré
-        />
-        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-5">
+      {/* Ce que vous allez développer */}
+      <section style={{ ...S, padding: "64px 48px" }}>
+        <div style={{ marginBottom: 40 }}>
+          <span className="kicker" style={{ marginBottom: 8, display: "block" }}>Ce que vous développez</span>
+          <h2 style={{ fontFamily: "var(--font-fraunces, Fraunces, serif)", fontWeight: 500, fontSize: "clamp(1.75rem, 3.5vw, 2.5rem)", lineHeight: 1.08, letterSpacing: "-0.02em", color: "var(--ink)", margin: "0 0 8px" }}>
+            Le théâtre, c'est bien plus que jouer la comédie
+          </h2>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 20 }}>
           {BIENFAITS.map((b, i) => (
             <motion.div
               key={b.titre}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.08 }}
-              whileHover={{ y: -4 }}
-              className="bg-creme-pale border-2 border-encre rounded-xl p-6 shadow-card"
+              transition={{ delay: i * 0.07 }}
+              style={{ background: "#FBF7EC", border: "1px solid var(--ink-line)", borderRadius: 6, padding: 24, boxShadow: "0 2px 0 rgba(42,39,34,0.04), 0 8px 18px -10px rgba(42,39,34,0.12)" }}
             >
-              <div className="text-3xl mb-3">{b.emoji}</div>
-              <h3
-                className="font-display font-bold text-xl mb-2"
-                style={{ fontFamily: "var(--font-fraunces, Fraunces, serif)" }}
-              >
-                {b.titre}
-              </h3>
-              <p className="text-sm text-encre-douce leading-relaxed">{b.desc}</p>
+              <div style={{ fontSize: "1.75rem", marginBottom: 10 }}>{b.emoji}</div>
+              <h3 style={{ fontFamily: "var(--font-fraunces, Fraunces, serif)", fontWeight: 600, fontSize: "1.125rem", color: "var(--ink)", margin: "0 0 6px" }}>{b.titre}</h3>
+              <p style={{ fontFamily: "var(--font-worksans)", fontSize: "0.875rem", lineHeight: 1.6, color: "var(--ink-soft)", margin: 0 }}>{b.desc}</p>
             </motion.div>
           ))}
         </div>
-      </Section>
+      </section>
 
       {/* Programme */}
-      <Section className="bg-creme-pale rounded-2xl">
-        <SectionTitre
-          titre="Le programme 2025–2026"
-          sous="Choisissez l'atelier qui vous correspond"
-          centré
-        />
-        <div className="flex flex-col gap-4">
-          {ATELIERS.map((a, i) => {
-            const c = TONE_COLORS[a.tone];
-            return (
+      <section style={{ background: "var(--paper-warm)", padding: "64px 0" }}>
+        <div style={S}>
+          <div style={{ marginBottom: 36 }}>
+            <span className="kicker" style={{ marginBottom: 8, display: "block" }}>Programme 2025–2026</span>
+            <h2 style={{ fontFamily: "var(--font-fraunces, Fraunces, serif)", fontWeight: 500, fontSize: "clamp(1.75rem, 3.5vw, 2.5rem)", lineHeight: 1.08, letterSpacing: "-0.02em", color: "var(--ink)", margin: "0 0 8px" }}>
+              Choisissez l'atelier qui vous correspond
+            </h2>
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            {ATELIERS.map((a, i) => (
               <motion.div
                 key={i}
-                initial={{ opacity: 0, x: -16 }}
+                initial={{ opacity: 0, x: -12 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.07 }}
-                className={`flex items-center gap-5 ${c.bg} border-2 ${c.border} rounded-xl p-5`}
+                transition={{ delay: i * 0.06 }}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 20,
+                  background: `var(--${a.accent}-wash)`,
+                  border: `1px solid var(--${a.accent}-deep)`,
+                  borderRadius: 6,
+                  padding: "16px 20px",
+                }}
               >
-                <div className="text-3xl w-10 text-center flex-shrink-0">{a.emoji}</div>
-                <div className="flex-1 min-w-0">
-                  <div
-                    className={`font-display font-black text-xl ${c.text}`}
-                    style={{ fontFamily: "var(--font-fraunces, Fraunces, serif)" }}
-                  >
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontFamily: "var(--font-fraunces, Fraunces, serif)", fontWeight: 600, fontSize: "1.125rem", color: `var(--${a.accent}-deep)` }}>
                     {a.label}
                   </div>
-                  <div className="text-sm text-encre-douce mt-0.5">
+                  <div style={{ fontFamily: "var(--font-worksans)", fontSize: "0.875rem", color: "var(--ink-soft)", marginTop: 2 }}>
                     <strong>{a.jour}</strong> · {a.horaire}
                   </div>
                 </div>
                 <Link
-                  href="/contact#essai"
-                  className={`hidden md:inline-flex items-center gap-2 px-4 py-2 text-sm font-bold border-2 border-encre rounded-lg bg-creme hover:bg-creme-deep transition-colors no-underline text-encre flex-shrink-0`}
+                  href="/contact"
+                  style={{
+                    fontFamily: "var(--font-worksans)", fontSize: "0.8125rem", fontWeight: 500,
+                    padding: "8px 16px", borderRadius: 4, border: "1px solid var(--ink-line)",
+                    background: "rgba(255,255,255,0.6)", color: "var(--ink)", textDecoration: "none",
+                  }}
                 >
                   Essayer →
                 </Link>
               </motion.div>
-            );
-          })}
-        </div>
+            ))}
+          </div>
 
-        <div className="mt-8 bg-soleil-100 border-2 border-encre rounded-xl p-6 text-center">
-          <div className="text-3xl mb-2">✨</div>
-          <p className="font-bold text-lg text-encre mb-1">Première séance offerte</p>
-          <p className="text-base text-encre-douce mb-4">
-            Venez essayer un atelier sans engagement ni frais. Contactez-nous pour choisir votre créneau.
-          </p>
-          <Link href="/contact#essai" className="btn-acap inline-flex">
-            Réserver ma séance d'essai →
-          </Link>
+          {/* Encart 1re séance offerte */}
+          <div style={{
+            marginTop: 32,
+            background: "var(--moutarde-wash)",
+            border: "1px solid var(--moutarde-deep)",
+            borderRadius: 6,
+            padding: "28px 32px",
+            textAlign: "center",
+            position: "relative",
+          }}>
+            <div style={{ position: "absolute", inset: 6, border: "1px dashed var(--moutarde-deep)", borderRadius: 4, opacity: 0.3, pointerEvents: "none" }} />
+            <div style={{ fontSize: "1.5rem", marginBottom: 8, position: "relative" }}>✨</div>
+            <p style={{ fontFamily: "var(--font-fraunces, Fraunces, serif)", fontWeight: 600, fontSize: "1.25rem", color: "var(--ink)", margin: "0 0 8px", position: "relative" }}>Première séance offerte</p>
+            <p style={{ fontFamily: "var(--font-worksans)", fontSize: "0.9375rem", color: "var(--ink-soft)", margin: "0 0 20px", position: "relative" }}>
+              Venez essayer un atelier sans engagement ni frais.
+            </p>
+            <Link href="/contact" className="btn-acap" style={{ position: "relative" }}>
+              Réserver ma séance d'essai →
+            </Link>
+          </div>
         </div>
-      </Section>
+      </section>
 
       {/* Tarifs */}
-      <Section>
-        <div className="grid md:grid-cols-2 gap-8 items-start">
+      <section id="tarifs" style={{ ...S, padding: "64px 48px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48, alignItems: "start" }}>
           <div>
-            <SectionTitre titre="Tarifs 2025–2026" sous="Par trimestre, hors adhésion" />
-            <div className="bg-creme-pale border-2 border-encre rounded-xl overflow-hidden shadow-card">
-              <table className="w-full text-base">
+            <span className="kicker" style={{ marginBottom: 8, display: "block" }}>Tarifs 2025–2026</span>
+            <h2 style={{ fontFamily: "var(--font-fraunces, Fraunces, serif)", fontWeight: 500, fontSize: "1.875rem", lineHeight: 1.1, letterSpacing: "-0.02em", color: "var(--ink)", margin: "0 0 24px" }}>
+              Par trimestre, hors adhésion
+            </h2>
+            <div style={{ background: "#FBF7EC", border: "1px solid var(--ink-line)", borderRadius: 6, overflow: "hidden", boxShadow: "0 2px 0 rgba(42,39,34,0.04)" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse" }}>
                 <thead>
-                  <tr className="bg-encre text-creme-pale">
-                    <th className="text-left px-5 py-3 font-body font-bold">Durée du cours</th>
-                    <th className="text-right px-5 py-3 font-body font-bold">Tarif / trimestre</th>
+                  <tr style={{ background: "var(--ink)", color: "var(--paper)" }}>
+                    <th style={{ textAlign: "left", padding: "12px 20px", fontFamily: "var(--font-worksans)", fontWeight: 600, fontSize: "0.8125rem", textTransform: "uppercase", letterSpacing: "0.08em" }}>Durée du cours</th>
+                    <th style={{ textAlign: "right", padding: "12px 20px", fontFamily: "var(--font-worksans)", fontWeight: 600, fontSize: "0.8125rem", textTransform: "uppercase", letterSpacing: "0.08em" }}>Tarif / trimestre</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {[
-                    { duree: "45 minutes", tarif: "60 €" },
-                    { duree: "1h30", tarif: "117 €" },
-                    { duree: "2h", tarif: "132 €" },
-                    { duree: "2h30", tarif: "165 €" },
-                  ].map(({ duree, tarif }, i) => (
-                    <tr key={duree} className={i % 2 === 0 ? "bg-creme" : "bg-creme-pale"}>
-                      <td className="px-5 py-3 text-encre">{duree}</td>
-                      <td className="px-5 py-3 text-right font-bold text-encre">{tarif}</td>
+                  {TARIFS.map(({ duree, tarif }, i) => (
+                    <tr key={duree} style={{ background: i % 2 === 0 ? "#FBF7EC" : "var(--paper-warm)", borderBottom: "1px solid var(--ink-line)" }}>
+                      <td style={{ padding: "12px 20px", fontFamily: "var(--font-worksans)", fontSize: "0.9375rem", color: "var(--ink)" }}>{duree}</td>
+                      <td style={{ padding: "12px 20px", textAlign: "right", fontFamily: "var(--font-fraunces, Fraunces, serif)", fontStyle: "italic", fontSize: "1rem", fontWeight: 600, color: "var(--ink)" }}>{tarif}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
-            <p className="text-sm text-encre-douce mt-3">
-              Paiement en 1 ou 3 fois par chèque. Possibilité de financement par le CE ou les aides CAF.
+            <p style={{ fontFamily: "var(--font-worksans)", fontSize: "0.8125rem", color: "var(--ink-muted)", marginTop: 12 }}>
+              Paiement en 1 ou 3 fois par chèque. Financement CE ou aides CAF possible.
             </p>
           </div>
 
-          <div className="space-y-4">
-            <div className="bg-tomate-100 border-2 border-encre rounded-xl p-6 shadow-tomate">
-              <h3
-                className="font-display font-bold text-xl text-encre mb-3"
-                style={{ fontFamily: "var(--font-fraunces, Fraunces, serif)" }}
-              >
-                Adhésion annuelle
-              </h3>
-              <div className="flex justify-between items-center text-base">
-                <span className="text-encre">Cotisation association</span>
-                <span className="font-black text-2xl text-tomate-700">70 €</span>
+          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            <div style={{ background: "var(--rose-wash)", border: "1px solid var(--rose-deep)", borderRadius: 6, padding: 24, boxShadow: "6px 6px 0 var(--paper-deep)" }}>
+              <h3 style={{ fontFamily: "var(--font-fraunces, Fraunces, serif)", fontWeight: 600, fontSize: "1.125rem", color: "var(--ink)", margin: "0 0 12px" }}>Adhésion annuelle</h3>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span style={{ fontFamily: "var(--font-worksans)", fontSize: "0.9375rem", color: "var(--ink-soft)" }}>Cotisation association</span>
+                <span style={{ fontFamily: "var(--font-fraunces, Fraunces, serif)", fontStyle: "italic", fontSize: "1.75rem", fontWeight: 600, color: "var(--rose-deep)" }}>70 €</span>
               </div>
-              <p className="text-sm text-encre-douce mt-2">
-                Valable pour l'année scolaire complète (octobre → juin).
-              </p>
+              <p style={{ fontFamily: "var(--font-worksans)", fontSize: "0.8125rem", color: "var(--ink-muted)", margin: "8px 0 0" }}>Valable pour l'année scolaire complète.</p>
             </div>
-
-            <div className="bg-ciel-100 border-2 border-encre rounded-xl p-6">
-              <h3
-                className="font-display font-bold text-xl text-encre mb-3"
-                style={{ fontFamily: "var(--font-fraunces, Fraunces, serif)" }}
-              >
-                Caution costumes
-              </h3>
-              <div className="flex justify-between items-center text-base">
-                <span className="text-encre">Remboursée en fin de saison</span>
-                <span className="font-black text-2xl text-ciel-700">50 €</span>
+            <div style={{ background: "var(--lavande-wash)", border: "1px solid var(--lavande-deep)", borderRadius: 6, padding: 24 }}>
+              <h3 style={{ fontFamily: "var(--font-fraunces, Fraunces, serif)", fontWeight: 600, fontSize: "1.125rem", color: "var(--ink)", margin: "0 0 12px" }}>Caution costumes</h3>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span style={{ fontFamily: "var(--font-worksans)", fontSize: "0.9375rem", color: "var(--ink-soft)" }}>Remboursée en fin de saison</span>
+                <span style={{ fontFamily: "var(--font-fraunces, Fraunces, serif)", fontStyle: "italic", fontSize: "1.75rem", fontWeight: 600, color: "var(--lavande-deep)" }}>50 €</span>
               </div>
             </div>
-
-            <div className="bg-pomme-100 border-2 border-encre rounded-xl p-6">
-              <h3
-                className="font-display font-bold text-lg text-encre mb-2"
-                style={{ fontFamily: "var(--font-fraunces, Fraunces, serif)" }}
-              >
-                🎁 Attestation CE disponible
-              </h3>
-              <p className="text-sm text-encre-douce">
+            <div style={{ background: "var(--mousse-wash)", border: "1px solid var(--mousse-deep)", borderRadius: 6, padding: 24 }}>
+              <h3 style={{ fontFamily: "var(--font-fraunces, Fraunces, serif)", fontWeight: 600, fontSize: "1rem", color: "var(--ink)", margin: "0 0 6px" }}>🎁 Attestation CE disponible</h3>
+              <p style={{ fontFamily: "var(--font-worksans)", fontSize: "0.8125rem", color: "var(--ink-muted)", margin: 0 }}>
                 Nous fournissons une attestation pour votre comité d'entreprise.
               </p>
             </div>
           </div>
         </div>
-      </Section>
+      </section>
 
       {/* CTA inscription */}
-      <div className="bg-encre py-16">
-        <div className="max-w-page mx-auto px-6 text-center">
-          <h2
-            className="font-display font-black text-3xl md:text-4xl text-creme-pale mb-4"
-            style={{ fontFamily: "var(--font-fraunces, Fraunces, serif)" }}
-          >
+      <div style={{ background: "var(--ink)", padding: "64px 0" }}>
+        <div style={{ ...S, textAlign: "center" }}>
+          <h2 style={{ fontFamily: "var(--font-fraunces, Fraunces, serif)", fontWeight: 600, fontSize: "clamp(1.75rem, 3.5vw, 2.5rem)", lineHeight: 1.1, color: "var(--paper)", margin: "0 0 16px" }}>
             Prêt·e à monter sur scène ?
           </h2>
-          <p className="text-lg mb-8" style={{ color: "#d4c8b3" }}>
+          <p style={{ fontFamily: "var(--font-worksans)", fontSize: "1.0625rem", color: "var(--ink-line)", margin: "0 0 32px" }}>
             Commencez par une séance d'essai gratuite. Aucun engagement.
           </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <Link href="/contact#essai" className="btn-acap text-lg py-4 px-8">
+          <div style={{ display: "flex", justifyContent: "center", gap: 12, flexWrap: "wrap" }}>
+            <Link href="/contact" className="btn-acap" style={{ background: "var(--paper)", color: "var(--ink)" }}>
               Réserver une séance d'essai →
             </Link>
-            <Link href="/contact#inscription" className="btn-acap bg-creme-pale text-encre text-lg py-4 px-8">
+            <Link href="/contact" className="btn-acap btn-acap--secondary" style={{ borderColor: "var(--paper-warm)", color: "var(--paper-warm)" }}>
               Formulaire d'inscription
             </Link>
           </div>
