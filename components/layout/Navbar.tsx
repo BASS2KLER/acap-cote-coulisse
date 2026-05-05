@@ -30,7 +30,7 @@ export default function Navbar() {
           aria-label="L'ACAP — accueil"
         >
           {/* Masques SVG */}
-          <svg width="52" height="30" viewBox="0 0 200 110" aria-hidden="true">
+          <svg width="80" height="48" viewBox="0 0 200 110" aria-hidden="true">
             <ellipse cx="36" cy="42" rx="28" ry="32" fill="#cfcfcf" stroke="#2a2118" strokeWidth="3"/>
             <path d="M22 38 q4 -4 8 0 M38 38 q4 -4 8 0" fill="none" stroke="#2a2118" strokeWidth="2.6" strokeLinecap="round"/>
             <path d="M22 56 q14 -4 24 0" fill="none" stroke="#2a2118" strokeWidth="2.6" strokeLinecap="round"/>
