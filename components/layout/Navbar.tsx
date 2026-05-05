@@ -30,19 +30,19 @@ export default function Navbar() {
       }}
     >
       <div style={{ maxWidth: 1280, margin: "0 auto", padding: "0 48px" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 32, height: 64 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 32, height: 72 }}>
 
           {/* Marque */}
           <Link
             href="/"
             style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none", flexShrink: 0 }}
           >
-            <div style={{ width: 34, height: 34, borderRadius: 4, overflow: "hidden", border: "1px solid var(--ink-line)", flexShrink: 0 }}>
+            <div style={{ width: 52, height: 52, borderRadius: 6, overflow: "hidden", border: "1px solid var(--ink-line)", flexShrink: 0 }}>
               <Image
                 src="/logo-acap.jpg"
                 alt=""
-                width={34}
-                height={34}
+                width={52}
+                height={52}
                 style={{ objectFit: "cover", width: "100%", height: "100%" }}
               />
             </div>
