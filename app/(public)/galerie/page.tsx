@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Section, { SectionTitre } from "@/components/ui/Section";
 import { SPECTACLES } from "@/data/spectacles";
 import { getToneClasses } from "@/lib/utils";
+import VideoSection from "@/components/galerie/VideoSection";
 
 export const metadata: Metadata = {
   title: "Galerie — L'ACAP",
@@ -32,6 +33,9 @@ export default function GaleriePage() {
       </div>
 
       <Section>
+        {/* Section vidéos archives YouTube */}
+        <VideoSection />
+
         {/* Saison en cours */}
         <SectionTitre
           titre="Saison 2025–2026"
