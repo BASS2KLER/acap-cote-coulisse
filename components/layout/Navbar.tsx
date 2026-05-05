@@ -8,11 +8,12 @@ import { Menu, X } from "lucide-react";
 
 const LIENS = [
   { href: "/", label: "Accueil" },
-  { href: "/spectacles", label: "La saison" },
-  { href: "/troupe", label: "La troupe" },
-  { href: "/pratique", label: "Infos pratiques" },
+  { href: "/acap", label: "L'ACAP" },
+  { href: "/ateliers", label: "Ateliers" },
+  { href: "/spectacles", label: "Spectacles" },
   { href: "/galerie", label: "Galerie" },
-  { href: "/contact", label: "Nous écrire" },
+  { href: "/pratique", label: "Infos pratiques" },
+  { href: "/contact", label: "Contact" },
 ];
 
 export default function Navbar() {
@@ -86,10 +87,10 @@ export default function Navbar() {
         {/* CTA réservation + burger */}
         <div className="flex items-center gap-3">
           <Link
-            href="/spectacles"
+            href="/contact#essai"
             className="hidden md:inline-flex btn-acap text-sm py-2.5 px-5"
           >
-            Réserver une place →
+            Séance d'essai →
           </Link>
           <button
             className="md:hidden p-2 rounded-lg border-2 border-encre bg-creme text-encre"
@@ -129,11 +130,11 @@ export default function Navbar() {
                 );
               })}
               <Link
-                href="/spectacles"
+                href="/contact#essai"
                 className="btn-acap mt-2 text-center"
                 onClick={() => setMenuOuvert(false)}
               >
-                Réserver une place →
+                Séance d'essai →
               </Link>
             </nav>
           </motion.div>

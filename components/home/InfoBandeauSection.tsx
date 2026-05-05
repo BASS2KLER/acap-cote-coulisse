@@ -3,10 +3,10 @@
 import { motion } from "framer-motion";
 
 const INFOS = [
-  { emoji: "📍", titre: "Où ?", texte: "Salle des fêtes\nPlace de la Mairie, Saint-Prix (95)" },
-  { emoji: "🚗", titre: "Parking", texte: "Gratuit devant la salle" },
-  { emoji: "♿", titre: "Accès PMR", texte: "Salle accessible de plain-pied" },
-  { emoji: "🎟", titre: "Réservation", texte: "Sur place ou par téléphone" },
+  { emoji: "🎭", titre: "Ateliers", texte: "Adultes & enfants\nTous niveaux bienvenus" },
+  { emoji: "📍", titre: "Le Jardin d'Hélène", texte: "6 rue Auguste Rey\nSaint-Prix (95)" },
+  { emoji: "📅", titre: "Saison", texte: "Octobre → juin\nLun, Mar, Mercredi" },
+  { emoji: "✨", titre: "1re séance offerte", texte: "Venez essayer\nsans engagement" },
 ];
 
 export default function InfoBandeauSection() {

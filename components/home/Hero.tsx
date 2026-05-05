@@ -117,7 +117,7 @@ export default function Hero() {
             transition={{ delay: 0.1, duration: 0.4 }}
             className="chip-acap bg-soleil-200 text-soleil-ink mb-5 inline-flex"
           >
-            ★ Saison 2025–2026
+            ★ École de théâtre à Saint-Prix
           </motion.span>
 
           <motion.h1
@@ -132,8 +132,8 @@ export default function Hero() {
               letterSpacing: "-0.02em",
             }}
           >
-            Bienvenue chez nous,{" "}
-            <span className="text-tomate-600">au théâtre.</span>
+            Prendre confiance,{" "}
+            <span className="text-tomate-600">trouver sa voix.</span>
           </motion.h1>
 
           <motion.p
@@ -142,8 +142,9 @@ export default function Hero() {
             transition={{ delay: 0.3, duration: 0.45 }}
             className="text-lg md:text-xl text-encre-douce mb-8 max-w-prose leading-relaxed"
           >
-            On vous a préparé quatre spectacles cette année&nbsp;: deux comédies,
-            un drame et une création originale. On a hâte de vous y voir&nbsp;!
+            L'ACAP propose des ateliers de théâtre pour adultes et enfants
+            à Saint-Prix depuis 2003. Tous niveaux bienvenus — la première
+            séance est offerte.
           </motion.p>
 
           <motion.div
@@ -152,14 +153,14 @@ export default function Hero() {
             transition={{ delay: 0.4, duration: 0.4 }}
             className="flex flex-wrap gap-4"
           >
-            <Link href="/spectacles" className="btn-acap">
-              Voir la saison →
+            <Link href="/ateliers" className="btn-acap">
+              Découvrir les ateliers →
             </Link>
             <Link
-              href="/pratique"
+              href="/contact#essai"
               className="btn-acap bg-transparent text-encre"
             >
-              Infos pratiques
+              Faire une séance d'essai
             </Link>
           </motion.div>
 
@@ -170,9 +171,9 @@ export default function Hero() {
             transition={{ delay: 0.55 }}
             className="mt-8 flex flex-wrap gap-4 text-sm text-encre-douce font-body"
           >
-            <span>📍 Salle des fêtes de Saint-Prix</span>
-            <span>🎟 À partir de 6 €</span>
-            <span>♿ Accès PMR</span>
+            <span>📍 Le Jardin d'Hélène, Saint-Prix</span>
+            <span>📅 Octobre → juin</span>
+            <span>✨ 1re séance offerte</span>
           </motion.div>
         </motion.div>
 

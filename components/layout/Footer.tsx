@@ -14,19 +14,16 @@ export default function Footer() {
           </div>
           <div
             className="italic text-lg mb-4"
-            style={{
-              fontFamily: "var(--font-fraunces, Fraunces, serif)",
-              color: "#fbdc7a",
-            }}
+            style={{ fontFamily: "var(--font-fraunces, Fraunces, serif)", color: "#fbdc7a" }}
           >
-            théâtre à Saint-Prix
+            école de théâtre à Saint-Prix
           </div>
           <p className="text-sm leading-relaxed max-w-xs" style={{ color: "#d4c8b3" }}>
-            Une troupe d'amateurs passionnés qui font du théâtre pour le plaisir,
-            à Saint-Prix (95). On joue depuis 1992.
+            Ateliers de théâtre pour adultes et enfants depuis 2003.
+            Au Jardin d'Hélène, 6 rue Auguste Rey, Saint-Prix (95).
           </p>
           <p className="text-sm mt-4 font-bold" style={{ color: "#fbdc7a" }}>
-            Association loi 1901
+            Association loi 1901 — fondée en 2003
           </p>
         </div>
 
@@ -39,47 +36,49 @@ export default function Footer() {
             Nous trouver
           </h3>
           <address className="not-italic text-sm leading-relaxed" style={{ color: "#d4c8b3" }}>
-            Salle des fêtes<br />
-            Place de la Mairie<br />
+            <strong style={{ color: "#fbf6ec" }}>Le Jardin d'Hélène</strong><br />
+            6 rue Auguste Rey<br />
             95390 Saint-Prix<br />
-            <span style={{ color: "#8a7d6a" }}>
-              🚗 Parking gratuit · ♿ Accès PMR
-            </span>
           </address>
           <div className="mt-4 text-sm" style={{ color: "#d4c8b3" }}>
-            <div className="font-bold mb-1" style={{ color: "#d4c8b3" }}>Répétitions</div>
-            Mardi soir, 20h–22h30
+            <div className="font-bold mb-2" style={{ color: "#d4c8b3" }}>Ateliers</div>
+            <div>Lun, Mar, Mer — voir le programme</div>
+            <div className="mt-1" style={{ color: "#8a7d6a" }}>Saison oct → juin</div>
           </div>
         </div>
 
-        {/* Nous contacter */}
+        {/* Contacts */}
         <div>
           <h3
             className="font-display font-bold text-xl mb-4"
             style={{ fontFamily: "var(--font-fraunces, Fraunces, serif)", color: "#f3c13a" }}
           >
-            Nous écrire
+            Nous contacter
           </h3>
-          <div className="text-sm leading-relaxed" style={{ color: "#d4c8b3" }}>
+          <div className="text-sm leading-relaxed space-y-2" style={{ color: "#d4c8b3" }}>
             <a
-              href="mailto:contact@acap-theatre.fr"
-              className="underline hover:text-creme-pale transition-colors"
+              href="mailto:lacap95@free.fr"
+              className="block underline hover:text-creme-pale transition-colors"
               style={{ color: "#fbf6ec" }}
             >
-              contact@acap-theatre.fr
+              lacap95@free.fr
             </a>
-            <div className="mt-2">01 39 91 XX XX</div>
-            <div className="text-xs mt-1" style={{ color: "#8a7d6a" }}>
-              Le mardi soir, en répétition
+            <div>
+              <span style={{ color: "#8a7d6a" }}>Hélène Toutain</span><br />
+              <a href="tel:+33681670498" className="hover:text-creme-pale transition-colors">06 81 67 04 98</a>
+            </div>
+            <div>
+              <span style={{ color: "#8a7d6a" }}>Florence Guillot</span><br />
+              <a href="tel:+33633622042" className="hover:text-creme-pale transition-colors">06 33 62 20 42</a>
             </div>
           </div>
 
           <nav className="mt-6 flex flex-col gap-1">
             {[
-              { href: "/pratique", label: "Infos pratiques" },
+              { href: "/ateliers", label: "Les ateliers" },
+              { href: "/spectacles", label: "Les spectacles" },
               { href: "/galerie", label: "Galerie photos" },
-              { href: "/contact", label: "Formulaire de contact" },
-              { href: "/contact#rejoindre", label: "Rejoindre la troupe" },
+              { href: "/contact", label: "Formulaire d'inscription" },
             ].map((l) => (
               <Link
                 key={l.href}
