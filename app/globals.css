@@ -2,124 +2,230 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,800;9..144,900&family=Nunito:wght@400;500;600;700;800&display=swap');
-
 :root {
-  /* Couleurs de base */
-  --creme:         #fbf6ec;
-  --creme-pale:    #fefaf2;
-  --creme-deep:    #f3ead9;
-  --encre:         #2a2118;
-  --encre-douce:   #4d4031;
-  --filet:         #e6dcc7;
+  /* Fonds papier */
+  --paper:       #F5EFE3;
+  --paper-warm:  #EFE6D2;
+  --paper-deep:  #E6DCC4;
+
+  /* Encre */
+  --ink:         #2A2722;
+  --ink-soft:    #4A463E;
+  --ink-muted:   #7A7568;
+  --ink-line:    #C9C0AB;
+
+  /* Tons spectacles */
+  --rose:          #D89B9B;
+  --rose-deep:     #B26F70;
+  --rose-wash:     #F0DCD9;
+  --mousse:        #94A287;
+  --mousse-deep:   #5F6E54;
+  --mousse-wash:   #DEE3D3;
+  --moutarde:      #C8A24A;
+  --moutarde-deep: #8E6F22;
+  --moutarde-wash: #EFE3BE;
+  --lavande:       #9AA0C4;
+  --lavande-deep:  #5E6593;
+  --lavande-wash:  #DDDFEC;
+
+  /* Accent par défaut */
+  --accent:      var(--rose);
+  --accent-deep: var(--rose-deep);
+  --accent-wash: var(--rose-wash);
 
   /* Mouvement */
-  --ease-bounce: cubic-bezier(.34, 1.56, .64, 1);
+  --ease-smile:  cubic-bezier(.34, 1.36, .64, 1);
   --ease-soft:   cubic-bezier(.4, 0, .2, 1);
+  --dur-fast:    140ms;
+  --dur-base:    240ms;
+  --dur-slow:    420ms;
+
+  /* Texture papier */
+  --paper-grain:
+    radial-gradient(circle at 25% 30%, rgba(42,39,34,.025) 0, transparent 30%),
+    radial-gradient(circle at 75% 70%, rgba(42,39,34,.02) 0, transparent 35%);
 }
 
 @layer base {
   html {
-    font-size: 18px;
+    font-size: 16px;
     scroll-behavior: smooth;
   }
 
   body {
-    background-color: #fbf6ec;
-    color: #2a2118;
-    font-family: var(--font-nunito, "Nunito", system-ui, sans-serif);
+    background-color: var(--paper);
+    background-image: var(--paper-grain);
+    color: var(--ink);
+    font-family: var(--font-worksans, "Work Sans", system-ui, sans-serif);
+    font-size: 1rem;
     font-weight: 400;
-    line-height: 1.65;
+    line-height: 1.55;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
-    /* Texture papier subtile */
-    background-image:
-      radial-gradient(circle at 10% 20%, rgba(74,64,49,0.025) 1px, transparent 1px),
-      radial-gradient(circle at 80% 70%, rgba(74,64,49,0.02) 1px, transparent 1px);
-    background-size: 40px 40px, 60px 60px;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1, h2, h3 {
     font-family: var(--font-fraunces, "Fraunces", Georgia, serif);
-    font-weight: 700;
-    line-height: 1.1;
+    font-weight: 600;
+    line-height: 1.08;
     letter-spacing: -0.02em;
     text-wrap: balance;
-    color: #2a2118;
+    color: var(--ink);
+  }
+
+  h4, h5, h6 {
+    font-family: var(--font-worksans, "Work Sans", system-ui, sans-serif);
+    font-weight: 600;
+    line-height: 1.22;
+    color: var(--ink);
   }
 
   p {
     text-wrap: pretty;
   }
 
+  a {
+    color: var(--accent-deep);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+    transition: color var(--dur-fast) var(--ease-soft);
+  }
+  a:hover { color: var(--ink); }
+
   *:focus-visible {
-    outline: 3px solid #f3c13a;
+    outline: 3px solid var(--moutarde);
     outline-offset: 3px;
-    border-radius: 6px;
+    border-radius: 4px;
   }
 }
 
+/* ── Helpers accent ───────────────────────────────────── */
+.accent-rose     { --accent: var(--rose);     --accent-deep: var(--rose-deep);     --accent-wash: var(--rose-wash); }
+.accent-mousse   { --accent: var(--mousse);   --accent-deep: var(--mousse-deep);   --accent-wash: var(--mousse-wash); }
+.accent-moutarde { --accent: var(--moutarde); --accent-deep: var(--moutarde-deep); --accent-wash: var(--moutarde-wash); }
+.accent-lavande  { --accent: var(--lavande);  --accent-deep: var(--lavande-deep);  --accent-wash: var(--lavande-wash); }
+
+/* ── Typographie utilitaires ──────────────────────────── */
+.show-name, em.show {
+  font-family: var(--font-fraunces, "Fraunces", Georgia, serif);
+  font-style: italic;
+  font-weight: 500;
+}
+
+.kicker {
+  font-family: var(--font-worksans, "Work Sans", system-ui, sans-serif);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--accent-deep, var(--rose-deep));
+  display: inline-block;
+}
+
+/* ── Composants ───────────────────────────────────────── */
 @layer components {
+
   /* Bouton principal */
   .btn-acap {
-    @apply inline-flex items-center justify-center gap-2;
-    @apply font-body font-bold text-lg;
-    @apply px-7 py-4 rounded-pill;
-    @apply border-[3px] border-encre;
-    @apply bg-tomate-500 text-creme-pale;
-    @apply cursor-pointer no-underline;
-    @apply shadow-encre;
-    @apply transition-all duration-150;
-    transition-timing-function: cubic-bezier(.34, 1.56, .64, 1);
+    font-family: var(--font-worksans, "Work Sans", system-ui, sans-serif);
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 10px 18px;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all var(--dur-fast) var(--ease-soft);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    background: var(--accent-deep, var(--rose-deep));
+    color: var(--paper);
   }
   .btn-acap:hover {
-    @apply shadow-encre-lg;
-    transform: translate(-2px, -2px) rotate(-1deg);
+    background: var(--ink);
+    color: var(--paper);
+    transform: translateY(-1px);
+    text-decoration: none;
   }
-  .btn-acap:active {
-    @apply shadow-none;
-    transform: translate(2px, 2px);
-  }
+  .btn-acap:active { transform: translateY(0); }
 
+  /* Bouton secondaire */
+  .btn-acap--secondary {
+    background: transparent;
+    color: var(--ink);
+    border-color: var(--ink);
+  }
+  .btn-acap--secondary:hover { background: var(--ink); color: var(--paper); }
+
+  /* Bouton ghost */
   .btn-acap--ghost {
-    @apply bg-transparent text-encre;
+    background: transparent;
+    color: var(--ink);
+    padding: 10px 0;
   }
-  .btn-acap--soleil {
-    @apply bg-soleil-400 text-soleil-ink;
-  }
-  .btn-acap--pomme {
-    @apply bg-pomme-500 text-creme-pale;
-  }
-  .btn-acap--ciel {
-    @apply bg-ciel-500 text-creme-pale;
-  }
+  .btn-acap--ghost:hover { color: var(--accent-deep, var(--rose-deep)); background: transparent; }
 
-  /* Chip / tag genre */
+  /* Chip / badge */
   .chip-acap {
-    @apply inline-flex items-center gap-1;
-    @apply font-body font-bold text-sm;
-    @apply px-3 py-1 rounded-pill;
-    @apply border-2 border-encre;
-    @apply bg-creme-pale text-encre;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-family: var(--font-worksans, "Work Sans", system-ui, sans-serif);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    padding: 3px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--ink-line);
+    background: rgba(255,255,255,0.5);
+    color: var(--ink-soft);
   }
 
-  /* Carte */
-  .card-acap {
-    @apply bg-creme-pale;
-    @apply border-[2px] border-encre rounded-xl;
-    @apply p-5 shadow-card;
+  /* Section wrapper */
+  .section-acap {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 48px 48px;
+  }
+
+  /* Tampon incliné */
+  .stamp {
+    font-family: var(--font-fraunces, "Fraunces", Georgia, serif);
+    font-style: italic;
+    font-size: 0.75rem;
+    border: 1.5px solid var(--accent-deep, var(--rose-deep));
+    color: var(--accent-deep, var(--rose-deep));
+    padding: 3px 10px;
+    border-radius: 3px;
+    letter-spacing: 0.04em;
+    background: rgba(255,255,255,0.5);
   }
 }
 
-/* Champ admin réutilisable */
+/* Champ formulaire */
 .admin-input {
-  @apply text-base px-4 py-3 border-[2.5px] border-encre rounded-lg bg-creme font-body w-full;
-  @apply focus:outline-none focus:ring-2 focus:ring-soleil-500;
-  font-family: var(--font-nunito, Nunito, sans-serif);
+  width: 100%;
+  font-family: var(--font-worksans, "Work Sans", system-ui, sans-serif);
+  font-size: 0.9375rem;
+  padding: 10px 14px;
+  border-radius: 4px;
+  border: 1px solid var(--ink-line);
+  background: rgba(255,255,255,0.6);
+  color: var(--ink);
+  outline: none;
+  transition: box-shadow var(--dur-fast) var(--ease-soft), border-color var(--dur-fast);
+}
+.admin-input:focus {
+  border-color: var(--rose-deep);
+  box-shadow: 0 0 0 3px rgba(178,111,112,0.18);
+  background: white;
 }
 
-/* Scrollbar discrète style papier */
-::-webkit-scrollbar { width: 8px; }
-::-webkit-scrollbar-track { background: #f3ead9; }
-::-webkit-scrollbar-thumb { background: #e6dcc7; border-radius: 999px; }
-::-webkit-scrollbar-thumb:hover { background: #8a7d6a; }
+/* Scrollbar discrète */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--paper-warm); }
+::-webkit-scrollbar-thumb { background: var(--ink-line); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: var(--ink-muted); }

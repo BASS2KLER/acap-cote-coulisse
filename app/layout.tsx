@@ -1,19 +1,28 @@
 import type { Metadata } from "next";
-import { Fraunces, Nunito } from "next/font/google";
+import { Fraunces, Work_Sans, Bricolage_Grotesque } from "next/font/google";
 import "./globals.css";
 import ConvexClientProvider from "@/components/ConvexClientProvider";
 
 const fraunces = Fraunces({
   subsets: ["latin"],
   variable: "--font-fraunces",
-  weight: ["500", "600", "700", "800", "900"],
+  weight: ["400", "500", "600", "700"],
+  style: ["normal", "italic"],
   display: "swap",
 });
 
-const nunito = Nunito({
+const workSans = Work_Sans({
   subsets: ["latin"],
-  variable: "--font-nunito",
-  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-worksans",
+  weight: ["300", "400", "500", "600", "700"],
+  style: ["normal", "italic"],
+  display: "swap",
+});
+
+const bricolage = Bricolage_Grotesque({
+  subsets: ["latin"],
+  variable: "--font-bricolage",
+  weight: ["300", "400", "500", "600", "700"],
   display: "swap",
 });
 
@@ -37,7 +46,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="fr" className={`${fraunces.variable} ${nunito.variable}`}>
+    <html lang="fr" className={`${fraunces.variable} ${workSans.variable} ${bricolage.variable}`}>
       <body className="antialiased">
         <ConvexClientProvider>
           {children}

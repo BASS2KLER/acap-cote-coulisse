@@ -2,152 +2,124 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import Chip from "@/components/ui/Chip";
 import type { Spectacle } from "@/lib/types";
-import { getToneClasses, isComplet, getPlacesLabel } from "@/lib/utils";
+import { getToneVars, isComplet } from "@/lib/utils";
 
 interface SpectacleCardProps {
   spectacle: Spectacle;
   compact?: boolean;
 }
 
-// Découpe la date pour l'afficher en gros
-function parseDateParts(date: string) {
-  const parts = date.split(" ");
-  return {
-    jour:   parts[0] || "",   // "Sam."
-    numero: parts[1] || "",   // "14"
-    mois:   parts[2] || "",   // "mars"
-  };
-}
-
 export default function SpectacleCard({ spectacle, compact }: SpectacleCardProps) {
-  const tone = getToneClasses(spectacle.tone);
+  const { accentDeep, accentWash, accentClass } = getToneVars(spectacle.tone);
   const complet = isComplet(spectacle.places);
-  const dateParts = parseDateParts(spectacle.date);
 
   return (
     <motion.article
-      whileHover={{ x: -3, y: -3, rotate: -0.4 }}
-      whileTap={{ x: 1, y: 1 }}
-      transition={{ type: "spring", stiffness: 350, damping: 18 }}
-      className={`
-        relative bg-creme-pale border-[2.5px] border-encre rounded-xl
-        ${tone.shadow}
-        ${compact ? "p-5" : "p-6 md:p-7"}
-        grid gap-5
-        ${compact ? "" : "md:grid-cols-[auto_1fr_auto]"}
-        items-center cursor-pointer
-      `}
+      whileHover={{ y: -3, rotate: -0.6 }}
+      style={{ cursor: "pointer" }}
+      transition={{ duration: 0.24, ease: [0.34, 1.36, 0.64, 1] }}
+      className={accentClass}
     >
       <Link
         href={`/spectacles/${spectacle.slug}`}
-        className="absolute inset-0 rounded-xl focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-soleil-500"
-        aria-label={`Voir le spectacle : ${spectacle.titre}`}
-      />
-
-      {/* Bloc date */}
-      {!compact && (
-        <div
-          className={`hidden md:flex flex-col items-center justify-center rounded-lg border-[2px] border-encre px-6 py-4 min-w-[130px] text-center ${tone.bgLight}`}
+        style={{ textDecoration: "none", display: "block" }}
+      >
+        <div style={{
+          background: "#FBF7EC",
+          border: "1px solid var(--ink-line)",
+          borderRadius: 6,
+          overflow: "hidden",
+          boxShadow: "0 2px 0 rgba(42,39,34,0.05), 0 8px 18px -10px rgba(42,39,34,0.18)",
+          transition: "box-shadow 240ms",
+          display: "flex",
+          flexDirection: "column",
+          height: "100%",
+        }}
+        onMouseEnter={(e) => {
+          (e.currentTarget as HTMLDivElement).style.boxShadow = `6px 10px 0 var(--accent-wash)`;
+        }}
+        onMouseLeave={(e) => {
+          (e.currentTarget as HTMLDivElement).style.boxShadow = "0 2px 0 rgba(42,39,34,0.05), 0 8px 18px -10px rgba(42,39,34,0.18)";
+        }}
         >
-          <span
-            className="font-body font-bold text-xs uppercase tracking-widest mb-1"
-            style={{ color: `var(--${spectacle.tone}-700)` }}
-          >
-            {dateParts.jour}
-          </span>
-          <span
-            className="font-display font-black leading-none"
-            style={{
-              fontSize: "clamp(2.5rem, 5vw, 3.5rem)",
+          {/* Zone image */}
+          <div style={{
+            aspectRatio: "4/3",
+            background: accentWash,
+            borderBottom: "1px solid var(--ink-line)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            position: "relative",
+            padding: 16,
+          }}>
+            {spectacle.image ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={spectacle.image}
+                alt={spectacle.titre}
+                style={{ maxHeight: "100%", maxWidth: "100%", objectFit: "contain" }}
+              />
+            ) : (
+              <span style={{
+                fontFamily: "var(--font-fraunces, Fraunces, serif)",
+                fontStyle: "italic",
+                fontSize: "0.875rem",
+                color: "var(--ink-muted)",
+                letterSpacing: "0.04em",
+              }}>
+                {spectacle.emoji} illustration · à venir
+              </span>
+            )}
+            {/* Tampon */}
+            <span className="stamp" style={{
+              position: "absolute",
+              top: 12,
+              right: 12,
+              transform: "rotate(6deg)",
+              color: accentDeep,
+              borderColor: accentDeep,
+            }}>
+              {complet ? "complet" : spectacle.saison}
+            </span>
+          </div>
+
+          {/* Corps */}
+          <div style={{ padding: compact ? "14px 16px 16px" : "16px 18px 20px" }}>
+            <span className="kicker" style={{ marginBottom: 6, color: accentDeep }}>
+              {spectacle.genres[0] ?? "Théâtre"}
+            </span>
+            <h3 className="show-name" style={{
               fontFamily: "var(--font-fraunces, Fraunces, serif)",
-              color: `var(--${spectacle.tone}-700)`,
-            }}
-          >
-            {dateParts.numero}
-          </span>
-          <span
-            className="font-display font-bold text-xl"
-            style={{
-              fontFamily: "var(--font-fraunces, Fraunces, serif)",
-              color: `var(--${spectacle.tone}-700)`,
-            }}
-          >
-            {dateParts.mois}
-          </span>
-          <span className="font-body font-bold text-base text-encre mt-1">
-            {spectacle.heure}
-          </span>
+              fontStyle: "italic",
+              fontWeight: 500,
+              fontSize: compact ? "1.25rem" : "1.5rem",
+              lineHeight: 1.1,
+              color: "var(--ink)",
+              margin: "4px 0 6px",
+            }}>
+              {spectacle.titre}
+            </h3>
+            <p style={{
+              fontFamily: "var(--font-worksans, Work Sans, system-ui, sans-serif)",
+              fontSize: "0.8125rem",
+              color: "var(--ink-soft)",
+              margin: "0 0 2px",
+            }}>
+              {spectacle.date} · {spectacle.heure}
+            </p>
+            <p style={{
+              fontFamily: "var(--font-worksans, Work Sans, system-ui, sans-serif)",
+              fontSize: "0.75rem",
+              color: "var(--ink-muted)",
+              margin: 0,
+            }}>
+              {spectacle.auteur}
+            </p>
+          </div>
         </div>
-      )}
-
-      {/* Contenu principal */}
-      <div className="min-w-0">
-        {/* Chips genres */}
-        <div className="flex flex-wrap gap-2 mb-3">
-          {spectacle.genres.map((g) => (
-            <Chip key={g} label={g} genre={g} />
-          ))}
-          {complet && (
-            <span className="chip-acap bg-encre text-creme-pale">Complet</span>
-          )}
-        </div>
-
-        {/* Titre */}
-        <h3
-          className="font-display font-black leading-tight mb-1"
-          style={{
-            fontSize: "clamp(1.5rem, 3vw, 2.2rem)",
-            fontFamily: "var(--font-fraunces, Fraunces, serif)",
-            color: `var(--${spectacle.tone}-700)`,
-          }}
-        >
-          {spectacle.titre}
-        </h3>
-
-        {/* Auteur */}
-        <p
-          className="text-base md:text-lg italic text-encre-douce mb-3"
-          style={{ fontFamily: "var(--font-fraunces, Fraunces, serif)" }}
-        >
-          {spectacle.auteur}
-        </p>
-
-        {/* Date mobile */}
-        {compact && (
-          <p className="font-body font-bold text-base text-encre mb-2">
-            {spectacle.date} à {spectacle.heure}
-          </p>
-        )}
-
-        {/* Infos pratiques */}
-        <div className="flex flex-wrap gap-4 font-body text-sm text-encre">
-          <span>📍 {spectacle.lieu}</span>
-          <span>⏱ {spectacle.duree}</span>
-          <span>
-            🎟 <strong>{spectacle.prix}</strong>
-          </span>
-          {spectacle.pmr && <span>♿ PMR</span>}
-        </div>
-
-        {/* Places restantes */}
-        {!complet && spectacle.places <= 15 && (
-          <p className="mt-3 text-sm font-bold text-tomate-600">
-            ⚠️ {getPlacesLabel(spectacle.places)}
-          </p>
-        )}
-      </div>
-
-      {/* Emoji décoratif */}
-      {!compact && (
-        <div
-          className="hidden md:block text-7xl opacity-25 select-none"
-          aria-hidden="true"
-        >
-          {spectacle.emoji}
-        </div>
-      )}
+      </Link>
     </motion.article>
   );
 }

@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "name": "openai-netlify-deploy",
+  "owner": "trailofbits",
+  "repo": "skills-curated",
+  "path": "plugins/openai-netlify-deploy/skills/openai-netlify-deploy",
+  "branch": "main",
+  "sha": "6ea46b43ede5b377f1ddcb380eace1e7ea1fdcb1",
+  "source": "manual"
+}

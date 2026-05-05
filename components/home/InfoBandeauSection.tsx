@@ -12,23 +12,51 @@ const INFOS = [
 export default function InfoBandeauSection() {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ duration: 0.5 }}
-      className="relative z-10 max-w-page mx-auto px-6 -mt-4 mb-8"
+      transition={{ duration: 0.45 }}
+      style={{ maxWidth: 1280, margin: "0 auto 64px", padding: "0 48px" }}
     >
-      <div className="bg-soleil-100 border-[3px] border-encre rounded-xl shadow-soleil grid grid-cols-2 md:grid-cols-4 gap-0 divide-x-2 divide-encre overflow-hidden">
-        {INFOS.map((info) => (
-          <div key={info.titre} className="px-5 py-5 text-center">
-            <div className="text-4xl mb-2" aria-hidden="true">{info.emoji}</div>
-            <div
-              className="font-display font-bold text-lg mb-1"
-              style={{ fontFamily: "var(--font-fraunces, Fraunces, serif)" }}
-            >
+      <div style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(4, 1fr)",
+        background: "var(--paper-warm)",
+        border: "1px solid var(--ink-line)",
+        borderRadius: 6,
+        overflow: "hidden",
+        boxShadow: "0 2px 0 rgba(42,39,34,0.04), 0 8px 18px -10px rgba(42,39,34,0.12)",
+      }}>
+        {INFOS.map((info, i) => (
+          <div
+            key={info.titre}
+            style={{
+              padding: "24px 20px",
+              textAlign: "center",
+              borderRight: i < INFOS.length - 1 ? "1px solid var(--ink-line)" : undefined,
+            }}
+          >
+            <div style={{ fontSize: "1.75rem", marginBottom: 8 }} aria-hidden="true">
+              {info.emoji}
+            </div>
+            <div style={{
+              fontFamily: "var(--font-fraunces, Fraunces, serif)",
+              fontWeight: 600,
+              fontSize: "0.9375rem",
+              color: "var(--ink)",
+              marginBottom: 4,
+              lineHeight: 1.2,
+            }}>
               {info.titre}
             </div>
-            <p className="text-sm text-encre-douce leading-snug whitespace-pre-line">
+            <p style={{
+              fontFamily: "var(--font-worksans, Work Sans, system-ui, sans-serif)",
+              fontSize: "0.8125rem",
+              color: "var(--ink-muted)",
+              lineHeight: 1.55,
+              whiteSpace: "pre-line",
+              margin: 0,
+            }}>
               {info.texte}
             </p>
           </div>

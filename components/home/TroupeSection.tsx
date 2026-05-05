@@ -4,79 +4,135 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import Section, { SectionTitre } from "@/components/ui/Section";
+
+const AVATAR_WASHES = ["var(--rose-wash)", "var(--moutarde-wash)", "var(--mousse-wash)", "var(--lavande-wash)"];
 
 export default function TroupeSection() {
   const raw = useQuery(api.membres.list);
   const membres = (raw ?? []).slice(0, 4);
 
   return (
-    <Section>
-      <div className="grid md:grid-cols-2 gap-10 items-start">
-        {/* Texte gauche */}
-        <div>
-          <SectionTitre
-            titre="La troupe"
-            sous="Une trentaine de passionnés"
-          />
-          <p className="text-base md:text-lg text-encre leading-relaxed mb-5">
+    <section style={{ maxWidth: 1280, margin: "0 auto", padding: "64px 48px" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 64, alignItems: "start" }}>
+
+        {/* Texte */}
+        <motion.div
+          initial={{ opacity: 0, x: -16 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.45 }}
+        >
+          <span className="kicker" style={{ marginBottom: 8, display: "block" }}>
+            La troupe
+          </span>
+          <h2 style={{
+            fontFamily: "var(--font-fraunces, Fraunces, serif)",
+            fontWeight: 500,
+            fontSize: "clamp(2rem, 4vw, 2.5rem)",
+            lineHeight: 1.08,
+            letterSpacing: "-0.02em",
+            color: "var(--ink)",
+            margin: "0 0 20px",
+          }}>
+            Une trentaine de{" "}
+            <em className="show-name">passionnés</em>
+          </h2>
+          <p style={{
+            fontFamily: "var(--font-worksans, Work Sans, system-ui, sans-serif)",
+            fontSize: "1.0625rem",
+            lineHeight: 1.65,
+            color: "var(--ink-soft)",
+            margin: "0 0 16px",
+          }}>
             On est profs, infirmières, retraités, fonctionnaires, parents —
             et on fait du théâtre pour le plaisir, comme on irait à un club
             de belote ou de chant choral.
           </p>
-          <p className="text-base text-encre-douce leading-relaxed mb-8">
-            La troupe se retrouve chaque mardi soir depuis plus de trente ans.
+          <p style={{
+            fontFamily: "var(--font-worksans, Work Sans, system-ui, sans-serif)",
+            fontSize: "0.9375rem",
+            lineHeight: 1.6,
+            color: "var(--ink-muted)",
+            margin: "0 0 32px",
+          }}>
+            La troupe se retrouve chaque semaine depuis plus de vingt ans.
             Les répétitions sont ouvertes aux curieux — venez voir une séance
             avant de vous décider.
           </p>
-          <div className="flex flex-wrap gap-4">
+          <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
             <Link href="/troupe" className="btn-acap">
               Découvrir la troupe →
             </Link>
-            <Link
-              href="/contact#rejoindre"
-              className="btn-acap bg-pomme-500 text-creme-pale"
-            >
+            <Link href="/contact" className="btn-acap btn-acap--secondary">
               Nous rejoindre
             </Link>
           </div>
-        </div>
+        </motion.div>
 
         {/* Cartes membres */}
-        <div className="grid grid-cols-2 gap-4">
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
           {membres.map((membre, i) => (
             <motion.div
               key={membre._id}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.1, duration: 0.4 }}
-              className="bg-creme-pale border-2 border-encre rounded-xl p-4 shadow-card"
+              transition={{ delay: i * 0.09, duration: 0.4 }}
+              style={{
+                background: "#FBF7EC",
+                border: "1px solid var(--ink-line)",
+                borderRadius: 6,
+                padding: "18px 16px",
+                boxShadow: "0 2px 0 rgba(42,39,34,0.04), 0 6px 14px -8px rgba(42,39,34,0.12)",
+              }}
             >
-              {/* Avatar généré */}
-              <div
-                className="w-14 h-14 rounded-pill border-2 border-encre mb-3 flex items-center justify-center text-2xl font-display font-black"
-                style={{
-                  background: ["#fad9d2","#fdecb6","#d8ecc4","#cfe1f3"][i % 4],
-                  fontFamily: "var(--font-fraunces, Fraunces, serif)",
-                }}
-              >
+              {/* Avatar */}
+              <div style={{
+                width: 44,
+                height: 44,
+                borderRadius: "50%",
+                background: AVATAR_WASHES[i % 4],
+                border: "1px solid var(--ink-line)",
+                marginBottom: 12,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontFamily: "var(--font-fraunces, Fraunces, serif)",
+                fontWeight: 600,
+                fontSize: "1rem",
+                color: "var(--ink)",
+              }}>
                 {membre.nom.split(" ").map((n) => n[0]).join("").slice(0, 2)}
               </div>
-              <div
-                className="font-display font-bold text-base leading-tight mb-0.5"
-                style={{ fontFamily: "var(--font-fraunces, Fraunces, serif)" }}
-              >
+              <div style={{
+                fontFamily: "var(--font-fraunces, Fraunces, serif)",
+                fontWeight: 600,
+                fontSize: "0.9375rem",
+                color: "var(--ink)",
+                lineHeight: 1.2,
+                marginBottom: 3,
+              }}>
                 {membre.nom.split(" ")[0]}
               </div>
-              <div className="text-sm text-encre-douce">{membre.role}</div>
-              <div className="text-xs text-gris-poussiere mt-1">
+              <div style={{
+                fontFamily: "var(--font-worksans, Work Sans, system-ui, sans-serif)",
+                fontSize: "0.8125rem",
+                color: "var(--ink-soft)",
+              }}>
+                {membre.role}
+              </div>
+              <div style={{
+                fontFamily: "var(--font-worksans, Work Sans, system-ui, sans-serif)",
+                fontSize: "0.75rem",
+                color: "var(--ink-muted)",
+                marginTop: 4,
+              }}>
                 Depuis {membre.depuis}
               </div>
             </motion.div>
           ))}
         </div>
       </div>
-    </Section>
+    </section>
   );
 }
