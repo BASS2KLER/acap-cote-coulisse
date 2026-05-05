@@ -5,6 +5,17 @@ en réutilisant exactement les mêmes données (Convex), la même structure de r
 
 ---
 
+## Variantes existantes
+
+| Variant | Concept | Branche | URL | Statut |
+|---------|---------|---------|-----|--------|
+| v1 — Côté coulisses | Néo-brutaliste chaleureux, palette 6 tons, Fraunces+Nunito, classes Tailwind | `main` | https://acap-cote-coulisse.netlify.app | ✅ En prod |
+| v2 — Carte & Compagnie | Éditorial, carton imprimé, 4 accents, inline styles + CSS vars | `v2-carte-compagnie` | https://acap-v2-carte-compagnie.netlify.app | ✅ En prod |
+
+Les deux sites partagent le même backend Convex : `https://insightful-frog-410.convex.cloud`
+
+---
+
 ## Principe : ce qui change vs ce qui reste fixe
 
 ### Ce qui NE CHANGE PAS entre variants
@@ -15,21 +26,25 @@ en réutilisant exactement les mêmes données (Convex), la même structure de r
 - L'administration (tout `app/admin/` reste identique)
 - Le middleware auth (`middleware.ts`)
 - Les variables d'environnement Convex
+- `components/galerie/VideoSection.tsx` — section vidéos YouTube (identique sur tous les variants)
 
 ### Ce qui CHANGE pour chaque variant
 - `tailwind.config.ts` — couleurs, polices, rayons, ombres
-- `app/globals.css` — variables CSS, classes utilitaires (`btn-acap`, `chip-acap`, `admin-input`)
+- `app/globals.css` — variables CSS, classes utilitaires (`btn-acap`, `.kicker`, etc.)
 - `app/layout.tsx` — import des nouvelles polices Google Fonts
 - `components/layout/Navbar.tsx` — style de la barre de navigation
 - `components/layout/Footer.tsx` — style du pied de page
 - `components/home/*.tsx` — Hero, InfoBandeau, sections homepage
-- `components/ui/*.tsx` — Button, Chip, Section (si le variant redéfinit ces composants)
-- `components/spectacles/*.tsx` — cartes et liste spectacles
-- Les classes CSS inline dans les pages (`bg-tomate-100`, `text-encre`, etc.)
+- `components/ui/*.tsx` — Section, Button… (si le variant redéfinit ces composants)
+- `components/spectacles/SpectacleCard.tsx`, `ModalReservation.tsx`
+- Les pages `app/(public)/*.tsx` — classes CSS ou inline styles
 
 ---
 
-## Structure actuelle — variant v1 "Côté coulisses"
+## Variant v1 "Côté coulisses" (branche `main`)
+
+### Approche style
+Classes Tailwind nommées par sémantique (`bg-tomate-100`, `text-encre`, `border-encre`…).
 
 ### Palette de couleurs
 
@@ -41,7 +56,6 @@ pomme:     { 100: "#d8ecc4", 400: "#7eb952", 600: "#4a7e26", ink: "#1f3611" }
 ciel:      { 100: "#cfe1f3", 400: "#5b96d1", 600: "#2c6299", ink: "#102a44" }
 rose:      { 100: "#f6d7dc", 400: "#db7d8c", 600: "#a44354", ink: "#441620" }
 aubergine: { 100: "#ddd0e3", 400: "#8a6a9b", 600: "#563d66", ink: "#20162a" }
-// Neutres
 creme: "#fbf6ec"  creme-pale: "#fefaf2"  encre: "#2a2118"  filet: "#e6dcc7"
 ```
 
@@ -49,200 +63,191 @@ creme: "#fbf6ec"  creme-pale: "#fefaf2"  encre: "#2a2118"  filet: "#e6dcc7"
 
 ```ts
 fontFamily: {
-  display: ["var(--font-fraunces)", "Georgia", "serif"],  // titres expressifs
-  body:    ["var(--font-nunito)", "system-ui", "sans-serif"], // texte courant
+  display: ["var(--font-fraunces)", "Georgia", "serif"],
+  body:    ["var(--font-nunito)", "system-ui", "sans-serif"],
 }
 ```
 
-### Classes utilitaires clés (définies dans `globals.css`)
+### Classes utilitaires clés (`globals.css`)
 
 | Classe | Usage |
 |--------|-------|
 | `btn-acap` | Bouton principal (fond encre, texte crème, ombre colorée) |
 | `chip-acap` | Badge/étiquette arrondie |
-| `admin-input` | Champ de formulaire (admin et contact) |
+| `admin-input` | Champ de formulaire |
 | `max-w-page` | Conteneur centré max 1180px |
-| `rounded-pill` | Border-radius 999px |
 
-### Composants UI réutilisables
+### Mapping tone Convex → style v1
 
-```
-components/ui/Section.tsx      — wrapper section avec padding standardisé
-components/ui/Button.tsx       — bouton typé (primary / secondary / ghost)
-components/ui/Chip.tsx         — badge coloré
+```ts
+// lib/utils.ts — getToneClasses(tone)
+// Retourne { bgLight, border, text } pour les classes Tailwind
+tomate→bg-tomate-100  soleil→bg-soleil-100  pomme→bg-pomme-100
+ciel→bg-ciel-100  rose→bg-rose-100  aubergine→bg-aubergine-100
 ```
 
 ---
 
-## Créer un nouveau variant — étape par étape
+## Variant v2 "Carte & Compagnie" (branche `v2-carte-compagnie`)
 
-### Étape 1 : Forker le projet
+### Approche style
+**Inline styles + CSS custom properties** — pas de classes Tailwind de couleur dans les pages publiques.
+Toutes les couleurs passent par des CSS vars définies dans `globals.css`.
 
-```bash
-# Option A — travailler dans le même repo (branche)
-git checkout -b variant-v2-minimaliste
-
-# Option B — nouveau repo indépendant (recommandé pour variante très différente)
-cp -r acap_cote_coulisse acap_variant_v2
-cd acap_variant_v2
-git init && git add . && git commit -m "init: base depuis variant v1"
-```
-
-### Étape 2 : Connecter au même Convex
-
-Le nouveau projet pointe vers le **même déploiement Convex** (mêmes données).
-
-```bash
-# Copier le fichier .env.local depuis v1
-cp ../acap_cote_coulisse/.env.local .env.local
-# Contient : NEXT_PUBLIC_CONVEX_URL=https://xxxx.convex.cloud
-```
-
-**Ne pas lancer `npx convex dev`** — le schema et les fonctions sont déjà en production.
-Si tu travailles en local, utiliser le déploiement de préproduction Convex existant.
-
-### Étape 3 : Définir la nouvelle palette
-
-Remplacer entièrement `tailwind.config.ts` :
-
-```ts
-// Exemple variant "Scène noire" — minimaliste, typographique
-theme: {
-  extend: {
-    colors: {
-      // Remplacer tomate/soleil/etc. par de nouvelles couleurs
-      or:     { 100: "#fdf3d0", 400: "#e6b800", 600: "#9a7a00" },
-      ardoise:{ 100: "#e8eaed", 400: "#8896a4", 600: "#3d5166" },
-      // Neutres : passer d'un fond crème à un fond sombre par ex.
-      creme:      "#0d0d0d",   // inverser : fond noir
-      "creme-pale":"#1a1a1a",
-      encre:      "#f5f5f0",   // texte blanc cassé
-      filet:      "#2a2a2a",
-    },
-    fontFamily: {
-      // Changer les polices ici
-      display: ["var(--font-playfair)", "Georgia", "serif"],
-      body:    ["var(--font-inter)", "system-ui", "sans-serif"],
-    },
-  }
-}
-```
-
-### Étape 4 : Changer les polices
-
-Dans `app/layout.tsx` :
-
-```tsx
-// Avant (v1)
-import { Fraunces, Nunito } from "next/font/google";
-const fraunces = Fraunces({ subsets: ["latin"], variable: "--font-fraunces" });
-const nunito   = Nunito({ subsets: ["latin"], variable: "--font-nunito" });
-
-// Après (nouveau variant)
-import { Playfair_Display, Inter } from "next/font/google";
-const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair" });
-const inter    = Inter({ subsets: ["latin"], variable: "--font-inter" });
-
-// Mettre à jour le <body> avec les nouvelles variables
-<body className={`${playfair.variable} ${inter.variable} ...`}>
-```
-
-### Étape 5 : Redéfinir les classes utilitaires
-
-Dans `app/globals.css`, remplacer les classes `btn-acap`, `chip-acap`, `admin-input` :
+### CSS vars et palette
 
 ```css
-/* Exemple pour un variant "flat design moderne" */
-.btn-acap {
-  @apply inline-flex items-center gap-2 px-6 py-3 
-         bg-or-600 text-white font-bold rounded-sm
-         border-2 border-or-600
-         hover:bg-or-400 transition-colors;
-  /* Plus d'ombre sérigraphiée — style flat */
+/* globals.css */
+:root {
+  --paper: #F5EFE3;
+  --ink: #2A2722;
+  --ink-soft: #5A5550;
+  --ink-muted: #8A8480;
+  --ink-line: #E8E0D0;
+  --paper-deep: #EDE5D5;
+
+  /* 4 accents — chacun avec DEFAULT, -deep, -wash */
+  --rose: #C4735A;       --rose-deep: #8A3D2A;      --rose-wash: #F5E8E4;
+  --mousse: #6B8F5E;     --mousse-deep: #3D5C32;    --mousse-wash: #E8F0E4;
+  --moutarde: #B8922A;   --moutarde-deep: #7A5C10;  --moutarde-wash: #F5EDD8;
+  --lavande: #7B6FA0;    --lavande-deep: #4A3D70;   --lavande-wash: #EDE8F5;
 }
 ```
 
-### Étape 6 : Retravailler les composants visuels
+### Classes utilitaires v2 (`globals.css`)
 
-Les fichiers à modifier dans l'ordre de priorité :
+| Classe | Rôle |
+|--------|------|
+| `.kicker` | Label uppercase letter-spaced (type "★ Saison 2025–2026") |
+| `.show-name` | Italic Fraunces (noms de spectacles) |
+| `.stamp` | Badge italic Fraunces, border 1.5px, rotatable |
+| `.btn-acap` | Bouton principal — border-radius 6px, fond `--ink` |
+| `.btn-acap--secondary` | Variante fond transparent, bordure `--ink` |
+| `.accent-rose/mousse/moutarde/lavande` | Cascade `--accent`, `--accent-deep`, `--accent-wash` |
+| `.admin-input` | Champ de formulaire — 1px border, focus ring rose |
 
-1. **`components/layout/Navbar.tsx`** — structure et style (liens restent les mêmes)
-2. **`components/layout/Footer.tsx`** — mise en page (données restent les mêmes)
-3. **`components/home/Hero.tsx`** — illustration + couleurs de fond
-4. **`components/home/InfoBandeauSection.tsx`** — bandeau d'info
-5. **`components/spectacles/SpectacleCard.tsx`** — carte spectacle
-6. Pages `app/(public)/*.tsx` — remplacer les classes `bg-tomate-100`, `text-encre`, etc.
+### Typographie v2
 
-**Important :** ne pas modifier la logique des `useQuery` ni les mappings de données.
-
-### Étape 7 : Adapter les `tone` dans les pages
-
-Le champ `tone` dans Convex (`"tomate"`, `"soleil"`, etc.) est utilisé pour colorer dynamiquement
-les cartes spectacles. Si le nouveau design system n'a pas ces couleurs, créer un mapping :
-
-```ts
-// Exemple dans components/spectacles/SpectacleCard.tsx
-const TONE_MAP: Record<string, { bg: string; text: string }> = {
-  tomate:    { bg: "bg-red-100",    text: "text-red-700" },   // mapper vers les nouvelles couleurs
-  soleil:    { bg: "bg-yellow-100", text: "text-yellow-700" },
-  pomme:     { bg: "bg-green-100",  text: "text-green-700" },
-  ciel:      { bg: "bg-blue-100",   text: "text-blue-700" },
-  rose:      { bg: "bg-pink-100",   text: "text-pink-700" },
-  aubergine: { bg: "bg-purple-100", text: "text-purple-700" },
-};
+```tsx
+// app/layout.tsx
+import { Fraunces, Work_Sans, Bricolage_Grotesque } from "next/font/google";
+// IMPORTANT : ne pas mettre axes= (erreur next/font sur polices non-variable)
+const fraunces = Fraunces({ subsets: ["latin"], variable: "--font-fraunces",
+  weight: ["400","500","600","700"], style: ["normal","italic"], display: "swap" });
+const workSans = Work_Sans({ subsets: ["latin"], variable: "--font-worksans",
+  weight: ["300","400","500","600","700"], style: ["normal","italic"], display: "swap" });
+const bricolage = Bricolage_Grotesque({ subsets: ["latin"], variable: "--font-bricolage",
+  weight: ["300","400","500","600","700"], display: "swap" });
 ```
 
-### Étape 8 : Déployer le variant
+### Mapping tone Convex → accent v2
 
-```bash
-# Créer un nouveau site Netlify (site séparé)
-netlify init   # ou depuis l'interface Netlify
+```ts
+// lib/utils.ts — getToneVars(tone)
+const TONE_ACCENT: Record<ToneCouleur, string> = {
+  tomate: "rose", soleil: "moutarde", pomme: "mousse",
+  ciel: "lavande", rose: "rose", aubergine: "lavande",
+};
+// Retourne { accent, accentDeep, accentWash, accentClass }
+// accentClass = "accent-rose" | "accent-mousse" | …
+// → s'applique sur un wrapper pour cascader --accent, --accent-deep, --accent-wash
+```
 
-# Variables d'environnement à définir dans Netlify :
-NEXT_PUBLIC_CONVEX_URL=https://xxxx.convex.cloud  # même URL que v1
-ADMIN_PASSWORD=xxxx
-JWT_SECRET=xxxx
+### Pattern de mise en page v2
+
+En-tête éditorial (toutes les pages publiques) :
+```tsx
+<div style={{ borderBottom: "1px solid var(--ink-line)", padding: "48px 0" }}>
+  <div style={{ maxWidth: 1280, margin: "0 auto", padding: "0 48px" }}>
+    <span className="kicker" style={{ color: "var(--rose-deep)" }}>★ Saison 2025–2026</span>
+    <h1 style={{ fontFamily: "var(--font-fraunces)", fontSize: "clamp(2.5rem,5vw,4rem)", ... }}>
+      Titre de la page
+    </h1>
+  </div>
+</div>
+```
+
+Cartes :
+```tsx
+<div style={{ background: "#FBF7EC", border: "1px solid var(--ink-line)",
+  borderRadius: 6, boxShadow: "8px 8px 0 var(--paper-deep)" }}>
 ```
 
 ---
 
 ## Ce que chaque page publique attend des données
 
-| Page | Données Convex utilisées | Données statiques dans la page |
-|------|--------------------------|-------------------------------|
+| Page | Données Convex | Données statiques |
+|------|----------------|-------------------|
 | Accueil | spectacles.list · membres.list · actualites.list | — |
 | /acap | — | Texte association, valeurs, Le Jardin d'Hélène |
 | /ateliers | — | 7 ateliers, tarifs, bienfaits |
 | /spectacles | spectacles.list | — |
 | /spectacles/[slug] | spectacles.getBySlug | — |
-| /galerie | — | Archives saisons (placeholder) |
+| /galerie | — | VideoSection (9 spectacles YouTube) + archives saisons |
 | /pratique | — | Adresse, horaires, tenue, contacts |
 | /contact | — | Formulaire 3 onglets, coordonnées |
 | /troupe | membres.list | — |
 
 ---
 
-## Points d'attention
+## Créer un nouveau variant (v3, v4…)
 
-### Ne jamais modifier le schéma Convex entre variants
-Les deux sites partagent le même backend. Modifier `convex/schema.ts` impacte tous les variants.
-Si un variant a besoin de champs supplémentaires → ajouter des champs optionnels (`v.optional()`).
+### Étape 1 : Créer la branche
+```bash
+git checkout main
+git checkout -b v3-nom-du-variant
+```
 
-### L'admin reste identique
-Tous les variants utilisent le même admin pour gérer les spectacles, membres et actualités.
-Ne pas dupliquer l'admin — pointer vers le même `/admin` du variant v1, ou garder l'admin
-uniquement dans le variant v1 et mettre l'URL dans un signet.
+### Étape 2 : Choisir l'approche style
+- **Option A — Tailwind** (comme v1) : modifier `tailwind.config.ts`, utiliser des classes
+- **Option B — Inline styles + CSS vars** (comme v2) : définir les vars dans `globals.css`,
+  utiliser des inline styles dans les pages et composants
 
-### Les formulaires de contact n'envoient pas encore d'emails
-La page `/contact` simule l'envoi (timeout + state `envoyé`). Pour un vrai envoi, brancher
-une route API vers Resend ou Brevo. À faire pour la version finale choisie.
+### Étape 3 : Configurer les fonts
+Dans `app/layout.tsx`, importer les fonts Google et les passer en variables CSS.
+**Ne jamais mettre `axes=` sur les fonts** sauf si Next.js le supporte explicitement pour cette police.
+
+### Étape 4 : Redéfinir les classes utilitaires
+Dans `globals.css` : `.btn-acap`, `.admin-input`, `.kicker` (ou équivalent).
+
+### Étape 5 : Retravailler dans cet ordre
+1. `components/layout/Navbar.tsx`
+2. `components/layout/Footer.tsx`
+3. `components/home/Hero.tsx` + sections homepage
+4. `components/spectacles/SpectacleCard.tsx` + `ModalReservation.tsx`
+5. Pages `app/(public)/*.tsx` — en-têtes éditoriaux + layout interne
+
+### Étape 6 : Adapter le mapping tone
+Créer ou adapter `getToneVars()` / `getToneClasses()` dans `lib/utils.ts`.
+
+### Étape 7 : Déployer sur un nouveau site Netlify
+```bash
+# Variables d'env à configurer dans le dashboard Netlify :
+NEXT_PUBLIC_CONVEX_URL=https://insightful-frog-410.convex.cloud
+NEXT_PUBLIC_CONVEX_SITE_URL=https://insightful-frog-410.convex.site
+NEXT_TELEMETRY_DISABLED=1
+```
+Build command : `npm run build` · Publish dir : `.next` · Node : 20
+
+### Étape 8 : Garder VideoSection.tsx en commun
+`components/galerie/VideoSection.tsx` contient les 9 spectacles archivés YouTube.
+Ne pas le modifier par variant — c'est du contenu commun.
 
 ---
 
-## Variantes envisagées
+## Points d'attention
 
-| Variant | Concept | Statut |
-|---------|---------|--------|
-| v1 — Côté coulisses | Néo-brutaliste chaleureux, palette 6 tons, Fraunces+Nunito | ✅ En prod |
-| v2 — (à définir) | À discuter avec l'ACAP | 🔲 À créer |
-| v3 — (à définir) | À discuter avec l'ACAP | 🔲 À créer |
+### Ne jamais modifier le schéma Convex entre variants
+Les deux sites partagent le même backend. Si un variant a besoin de champs supplémentaires
+→ ajouter des champs optionnels (`v.optional()`).
+
+### L'admin est partagé
+Ne pas dupliquer `/app/admin/` entre variants. Un seul admin suffit pour gérer les données.
+
+### Les formulaires de contact n'envoient pas encore d'emails
+La page `/contact` simule l'envoi (timeout + state `envoyé`).
+Pour un vrai envoi → brancher une route API vers Resend ou Brevo.
+
+### InfoBandeau doit avoir `relative z-10`
+Le Hero crée un stacking context. Sans `z-10`, InfoBandeau passe derrière.
