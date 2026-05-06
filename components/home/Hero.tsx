@@ -130,10 +130,10 @@ export default function Hero() {
           {/* Image mascotte */}
           <div style={{ position: "relative", zIndex: 1, padding: "24px 20px 0", display: "flex", alignItems: "flex-end" }}>
             <Image
-              src="/mascotte-acap.png"
-              alt="Mascotte ACAP"
+              src="/moliere-acap.png"
+              alt="Personnage de theatre ACAP"
               width={300}
-              height={420}
+              height={490}
               style={{ width: "100%", height: "auto", display: "block" }}
               priority
             />
