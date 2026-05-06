@@ -1,6 +1,16 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
+// Validator partagé pour une représentation (utilisé dans le schéma et les mutations)
+export const representationValidator = v.object({
+  date: v.string(),      // "Sam. 14 mars"
+  dateISO: v.string(),   // "2026-03-14"
+  heure: v.string(),     // "20h30"
+  lieu: v.string(),
+  adresse: v.string(),
+  places: v.number(),
+});
+
 export default defineSchema({
   spectacles: defineTable({
     slug: v.string(),
@@ -8,11 +18,15 @@ export default defineSchema({
     auteur: v.string(),
     description: v.string(),
     descriptionCourte: v.string(),
-    date: v.string(),           // "Sam. 14 mars"
-    dateISO: v.string(),        // "2026-03-14"
-    heure: v.string(),          // "20h30"
-    lieu: v.string(),
-    adresse: v.string(),
+    // Anciens champs conservés en optional pour rétrocompatibilité migration
+    date: v.optional(v.string()),           // "Sam. 14 mars"
+    dateISO: v.optional(v.string()),        // "2026-03-14"
+    heure: v.optional(v.string()),          // "20h30"
+    lieu: v.optional(v.string()),
+    adresse: v.optional(v.string()),
+    places: v.optional(v.number()),
+    // Nouveau tableau de représentations
+    representations: v.optional(v.array(representationValidator)),
     duree: v.string(),
     prix: v.string(),
     prixReduit: v.string(),
@@ -23,7 +37,6 @@ export default defineSchema({
     galerieStorageIds: v.optional(v.array(v.id("_storage"))),
     lienVideo: v.optional(v.string()),
     pmr: v.boolean(),
-    places: v.number(),
     saison: v.string(),
     ordre: v.optional(v.number()),
   }).index("by_slug", ["slug"])
