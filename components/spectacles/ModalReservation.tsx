@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import type { Spectacle } from "@/lib/types";
+import type { Spectacle, Representation } from "@/lib/types";
+import { getPrimaryRepresentation } from "@/lib/utils";
 
 interface Props {
   spectacle: Spectacle;
@@ -32,6 +33,12 @@ export default function ModalReservation({ spectacle }: Props) {
   const [ouvert, setOuvert] = useState(false);
   const [envoyé, setEnvoyé] = useState(false);
   const [form, setForm] = useState({ nom: "", telephone: "", places: "2" });
+
+  // Gestion multi-représentations
+  const representations: Representation[] = spectacle.representations ?? [];
+  const primaryRepr = getPrimaryRepresentation(spectacle);
+  const [reprChoisie, setReprChoisie] = useState<Representation>(primaryRepr);
+  const multipleReprs = representations.length > 1;
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -124,13 +131,31 @@ export default function ModalReservation({ spectacle }: Props) {
                       On vous garde une place ?
                     </h2>
                     <p style={{ fontFamily: "var(--font-worksans)", fontSize: "0.9375rem", color: "var(--ink-soft)", margin: "0 0 2px" }}>
-                      <strong>{spectacle.titre}</strong> — {spectacle.date} à {spectacle.heure}
+                      <strong>{spectacle.titre}</strong> — {reprChoisie.date} à {reprChoisie.heure}
                     </p>
                     <p style={{ fontFamily: "var(--font-worksans)", fontSize: "0.8125rem", color: "var(--ink-muted)", margin: "0 0 24px" }}>
                       Remplissez vite, on vous rappelle dans la journée.
                     </p>
 
                     <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                      {/* Sélecteur de représentation si plusieurs dates */}
+                      {multipleReprs && (
+                        <label style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                          <span style={labelTextStyle}>Choisir une date</span>
+                          <select
+                            value={representations.indexOf(reprChoisie)}
+                            onChange={(e) => setReprChoisie(representations[parseInt(e.target.value)])}
+                            style={inputStyle}
+                          >
+                            {representations.map((r, i) => (
+                              <option key={i} value={i}>
+                                {r.date} à {r.heure} — {r.lieu}{r.places === 0 ? " (Complet)" : ""}
+                              </option>
+                            ))}
+                          </select>
+                        </label>
+                      )}
+
                       <label style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                         <span style={labelTextStyle}>Votre nom</span>
                         <input

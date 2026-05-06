@@ -5,7 +5,8 @@ import { useMutation } from "convex/react";
 import { useRouter } from "next/navigation";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
-import { Upload, X, ImagePlus } from "lucide-react";
+import type { Representation } from "@/lib/types";
+import { Upload, X, ImagePlus, Plus, Trash2 } from "lucide-react";
 
 const GENRES_OPTIONS = ["Comédie","Drame","Famille","Création","Classique","Tout-public"];
 const TONE_OPTIONS = [
@@ -17,6 +18,25 @@ const TONE_OPTIONS = [
   { value: "aubergine",label: "🍆 Aubergine" },
 ];
 
+// Représentation dans le formulaire (places en string pour l'input)
+interface RepresentationForm {
+  date: string;
+  dateISO: string;
+  heure: string;
+  lieu: string;
+  adresse: string;
+  places: string;
+}
+
+const REPR_VIDE: RepresentationForm = {
+  date: "",
+  dateISO: "",
+  heure: "20h30",
+  lieu: "Salle des fêtes",
+  adresse: "Place de la Mairie, 95390 Saint-Prix",
+  places: "50",
+};
+
 interface SpectacleFormProps {
   initial?: {
     _id?: Id<"spectacles">;
@@ -25,11 +45,15 @@ interface SpectacleFormProps {
     auteur?: string;
     description?: string;
     descriptionCourte?: string;
+    // Anciens champs (spectacles non migrés)
     date?: string;
     dateISO?: string;
     heure?: string;
     lieu?: string;
     adresse?: string;
+    places?: number;
+    // Nouveau format
+    representations?: Representation[];
     duree?: string;
     prix?: string;
     prixReduit?: string;
@@ -38,11 +62,41 @@ interface SpectacleFormProps {
     emoji?: string;
     lienVideo?: string;
     pmr?: boolean;
-    places?: number;
     saison?: string;
     imageUrl?: string | null;
   };
   mode: "create" | "edit";
+}
+
+/** Convertit les données initiales en tableau RepresentationForm */
+function initRepresentations(initial?: SpectacleFormProps["initial"]): RepresentationForm[] {
+  if (!initial) return [];
+
+  // Nouveau format : representations[]
+  if (initial.representations?.length) {
+    return initial.representations.map((r) => ({
+      date: r.date,
+      dateISO: r.dateISO,
+      heure: r.heure,
+      lieu: r.lieu,
+      adresse: r.adresse,
+      places: String(r.places),
+    }));
+  }
+
+  // Fallback : anciens champs individuels
+  if (initial.date) {
+    return [{
+      date: initial.date,
+      dateISO: initial.dateISO ?? "",
+      heure: initial.heure ?? "20h30",
+      lieu: initial.lieu ?? "Salle des fêtes",
+      adresse: initial.adresse ?? "Place de la Mairie, 95390 Saint-Prix",
+      places: String(initial.places ?? 50),
+    }];
+  }
+
+  return [];
 }
 
 export default function SpectacleForm({ initial, mode }: SpectacleFormProps) {
@@ -57,17 +111,13 @@ export default function SpectacleForm({ initial, mode }: SpectacleFormProps) {
   const [imageStorageId, setImageStorageId] = useState<Id<"_storage"> | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
+  // Champs principaux du spectacle
   const [form, setForm] = useState({
     slug:              initial?.slug              ?? "",
     titre:             initial?.titre             ?? "",
     auteur:            initial?.auteur            ?? "",
     description:       initial?.description       ?? "",
     descriptionCourte: initial?.descriptionCourte ?? "",
-    date:              initial?.date              ?? "",
-    dateISO:           initial?.dateISO           ?? "",
-    heure:             initial?.heure             ?? "20h30",
-    lieu:              initial?.lieu              ?? "Salle des fêtes",
-    adresse:           initial?.adresse           ?? "Place de la Mairie, 95390 Saint-Prix",
     duree:             initial?.duree             ?? "",
     prix:              initial?.prix              ?? "",
     prixReduit:        initial?.prixReduit        ?? "",
@@ -76,9 +126,16 @@ export default function SpectacleForm({ initial, mode }: SpectacleFormProps) {
     emoji:             initial?.emoji             ?? "🎭",
     lienVideo:         initial?.lienVideo         ?? "",
     pmr:               initial?.pmr               ?? true,
-    places:            String(initial?.places     ?? 50),
     saison:            initial?.saison            ?? "2025-2026",
   });
+
+  // Représentations
+  const [representations, setRepresentations] = useState<RepresentationForm[]>(
+    initRepresentations(initial)
+  );
+  // Mini-formulaire d'ajout d'une représentation
+  const [ajoutOuvert, setAjoutOuvert] = useState(false);
+  const [nouvelleRepr, setNouvelleRepr] = useState<RepresentationForm>(REPR_VIDE);
 
   function set(key: string, value: string | boolean | string[]) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -119,20 +176,54 @@ export default function SpectacleForm({ initial, mode }: SpectacleFormProps) {
     }
   }
 
+  // Supprimer une représentation
+  function supprimerRepr(index: number) {
+    setRepresentations((prev) => prev.filter((_, i) => i !== index));
+  }
+
+  // Valider et ajouter la nouvelle représentation
+  function ajouterRepr() {
+    if (!nouvelleRepr.date || !nouvelleRepr.dateISO) return;
+    setRepresentations((prev) => [...prev, nouvelleRepr]);
+    setNouvelleRepr(REPR_VIDE);
+    setAjoutOuvert(false);
+  }
+
+  // Mettre à jour un champ de la nouvelle représentation
+  function setNouvelleReprField(key: keyof RepresentationForm, value: string) {
+    setNouvelleRepr((r) => ({ ...r, [key]: value }));
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+
+    if (representations.length === 0) {
+      alert("Ajoutez au moins une représentation avant d'enregistrer.");
+      return;
+    }
+
     setSaving(true);
     try {
-      const data = {
+      // Convertir places string → number pour chaque représentation
+      const reps: Representation[] = representations.map((r) => ({
+        date: r.date,
+        dateISO: r.dateISO,
+        heure: r.heure,
+        lieu: r.lieu,
+        adresse: r.adresse,
+        places: parseInt(r.places) || 0,
+      }));
+
+      const baseData = {
         ...form,
-        places: parseInt(form.places) || 0,
+        representations: reps,
         ...(imageStorageId && { imageStorageId }),
       };
 
       if (mode === "create") {
-        await createMutation(data as Parameters<typeof createMutation>[0]);
+        await createMutation(baseData as Parameters<typeof createMutation>[0]);
       } else if (initial?._id) {
-        const { slug: _slug, ...updateData } = data as typeof data & { slug: string };
+        const { slug: _slug, ...updateData } = baseData as typeof baseData & { slug: string };
         await updateMutation({ id: initial._id, ...updateData } as Parameters<typeof updateMutation>[0]);
       }
       router.push("/admin/spectacles");
@@ -224,43 +315,144 @@ export default function SpectacleForm({ initial, mode }: SpectacleFormProps) {
         </label>
       </div>
 
-      {/* Date & lieu */}
+      {/* Représentations */}
       <div className="bg-creme-pale border-2 border-encre rounded-xl p-6 shadow-card space-y-4">
         <h2 className="font-display font-bold text-xl text-encre mb-2"
           style={{ fontFamily: "var(--font-fraunces, Fraunces, serif)" }}>
-          Date & lieu
+          Représentations
         </h2>
-        <div className="grid md:grid-cols-3 gap-4">
-          <label className="flex flex-col gap-1.5">
-            <span className="font-bold text-sm text-encre">Date affichée *</span>
-            <input required value={form.date} onChange={(e) => set("date", e.target.value)}
-              className="admin-input" placeholder="Sam. 14 mars" />
-            <span className="text-xs text-gris-poussiere">Ex : Sam. 14 mars</span>
-          </label>
-          <label className="flex flex-col gap-1.5">
-            <span className="font-bold text-sm text-encre">Date ISO *</span>
-            <input required type="date" value={form.dateISO}
-              onChange={(e) => set("dateISO", e.target.value)}
-              className="admin-input" />
-          </label>
-          <label className="flex flex-col gap-1.5">
-            <span className="font-bold text-sm text-encre">Heure *</span>
-            <input required value={form.heure} onChange={(e) => set("heure", e.target.value)}
-              className="admin-input" placeholder="20h30" />
-          </label>
-        </div>
-        <div className="grid md:grid-cols-2 gap-4">
-          <label className="flex flex-col gap-1.5">
-            <span className="font-bold text-sm text-encre">Lieu *</span>
-            <input required value={form.lieu} onChange={(e) => set("lieu", e.target.value)}
-              className="admin-input" placeholder="Salle des fêtes" />
-          </label>
-          <label className="flex flex-col gap-1.5">
-            <span className="font-bold text-sm text-encre">Adresse complète</span>
-            <input value={form.adresse} onChange={(e) => set("adresse", e.target.value)}
-              className="admin-input" />
-          </label>
-        </div>
+
+        {representations.length === 0 && (
+          <p className="text-sm text-encre-douce italic">Aucune représentation ajoutée. Cliquez sur &ldquo;+ Ajouter une représentation&rdquo; ci-dessous.</p>
+        )}
+
+        {/* Liste des représentations existantes */}
+        {representations.map((r, idx) => (
+          <div key={idx} className="border-2 border-encre rounded-lg p-4 bg-creme relative">
+            <button
+              type="button"
+              onClick={() => supprimerRepr(idx)}
+              className="absolute top-3 right-3 text-tomate-600 hover:text-tomate-700 transition-colors"
+              title="Supprimer cette représentation"
+            >
+              <Trash2 size={16} />
+            </button>
+            <div className="grid md:grid-cols-3 gap-3 pr-8">
+              <div>
+                <span className="font-bold text-xs text-encre-douce uppercase tracking-wider block mb-1">Date affichée</span>
+                <span className="text-sm font-bold text-encre">{r.date}</span>
+              </div>
+              <div>
+                <span className="font-bold text-xs text-encre-douce uppercase tracking-wider block mb-1">Heure</span>
+                <span className="text-sm font-bold text-encre">{r.heure}</span>
+              </div>
+              <div>
+                <span className="font-bold text-xs text-encre-douce uppercase tracking-wider block mb-1">Places</span>
+                <span className="text-sm font-bold text-encre">{r.places}</span>
+              </div>
+              <div className="md:col-span-2">
+                <span className="font-bold text-xs text-encre-douce uppercase tracking-wider block mb-1">Lieu</span>
+                <span className="text-sm text-encre">{r.lieu}</span>
+              </div>
+              <div>
+                <span className="font-bold text-xs text-encre-douce uppercase tracking-wider block mb-1">Date ISO</span>
+                <span className="text-sm text-encre-douce">{r.dateISO}</span>
+              </div>
+            </div>
+          </div>
+        ))}
+
+        {/* Mini-formulaire d'ajout */}
+        {ajoutOuvert ? (
+          <div className="border-2 border-dashed border-encre rounded-lg p-4 bg-creme space-y-3">
+            <h3 className="font-bold text-sm text-encre mb-2">Nouvelle représentation</h3>
+            <div className="grid md:grid-cols-3 gap-3">
+              <label className="flex flex-col gap-1.5">
+                <span className="font-bold text-xs text-encre">Date affichée *</span>
+                <input
+                  value={nouvelleRepr.date}
+                  onChange={(e) => setNouvelleReprField("date", e.target.value)}
+                  className="admin-input"
+                  placeholder="Sam. 14 mars"
+                />
+                <span className="text-xs text-gris-poussiere">Ex : Sam. 14 mars</span>
+              </label>
+              <label className="flex flex-col gap-1.5">
+                <span className="font-bold text-xs text-encre">Date ISO *</span>
+                <input
+                  type="date"
+                  value={nouvelleRepr.dateISO}
+                  onChange={(e) => setNouvelleReprField("dateISO", e.target.value)}
+                  className="admin-input"
+                />
+              </label>
+              <label className="flex flex-col gap-1.5">
+                <span className="font-bold text-xs text-encre">Heure *</span>
+                <input
+                  value={nouvelleRepr.heure}
+                  onChange={(e) => setNouvelleReprField("heure", e.target.value)}
+                  className="admin-input"
+                  placeholder="20h30"
+                />
+              </label>
+            </div>
+            <div className="grid md:grid-cols-2 gap-3">
+              <label className="flex flex-col gap-1.5">
+                <span className="font-bold text-xs text-encre">Lieu *</span>
+                <input
+                  value={nouvelleRepr.lieu}
+                  onChange={(e) => setNouvelleReprField("lieu", e.target.value)}
+                  className="admin-input"
+                  placeholder="Salle des fêtes"
+                />
+              </label>
+              <label className="flex flex-col gap-1.5">
+                <span className="font-bold text-xs text-encre">Adresse</span>
+                <input
+                  value={nouvelleRepr.adresse}
+                  onChange={(e) => setNouvelleReprField("adresse", e.target.value)}
+                  className="admin-input"
+                />
+              </label>
+            </div>
+            <label className="flex flex-col gap-1.5">
+              <span className="font-bold text-xs text-encre">Places disponibles</span>
+              <input
+                type="number"
+                min={0}
+                value={nouvelleRepr.places}
+                onChange={(e) => setNouvelleReprField("places", e.target.value)}
+                className="admin-input"
+              />
+              <span className="text-xs text-gris-poussiere">Mettre 0 pour afficher "Complet"</span>
+            </label>
+            <div className="flex gap-2 pt-1">
+              <button
+                type="button"
+                onClick={ajouterRepr}
+                disabled={!nouvelleRepr.date || !nouvelleRepr.dateISO}
+                className="flex items-center gap-2 px-4 py-2 border-2 border-encre rounded-lg text-sm font-bold bg-encre text-creme hover:opacity-90 transition-opacity disabled:opacity-40"
+              >
+                <Plus size={15} /> Ajouter
+              </button>
+              <button
+                type="button"
+                onClick={() => { setAjoutOuvert(false); setNouvelleRepr(REPR_VIDE); }}
+                className="px-4 py-2 border-2 border-encre rounded-lg text-sm font-bold bg-creme text-encre hover:bg-creme-deep transition-colors"
+              >
+                Annuler
+              </button>
+            </div>
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => setAjoutOuvert(true)}
+            className="flex items-center gap-2 px-4 py-2 border-2 border-dashed border-encre rounded-lg text-sm font-bold text-encre hover:bg-creme-deep transition-colors"
+          >
+            <Plus size={15} /> Ajouter une représentation
+          </button>
+        )}
       </div>
 
       {/* Tarifs & infos */}
@@ -284,13 +476,6 @@ export default function SpectacleForm({ initial, mode }: SpectacleFormProps) {
             <span className="font-bold text-sm text-encre">Durée</span>
             <input value={form.duree} onChange={(e) => set("duree", e.target.value)}
               className="admin-input" placeholder="1h45 (entracte inclus)" />
-          </label>
-          <label className="flex flex-col gap-1.5">
-            <span className="font-bold text-sm text-encre">Places disponibles</span>
-            <input type="number" min={0} value={form.places}
-              onChange={(e) => set("places", e.target.value)}
-              className="admin-input" />
-            <span className="text-xs text-gris-poussiere">Mettre 0 pour afficher "Complet"</span>
           </label>
         </div>
         <label className="flex items-center gap-3 cursor-pointer">

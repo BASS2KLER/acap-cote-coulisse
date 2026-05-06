@@ -14,29 +14,41 @@ export type GenreSpectacle =
   | "Classique"
   | "Tout-public";
 
+export interface Representation {
+  date: string;      // ex: "Sam. 14 mars"
+  dateISO: string;   // ex: "2026-03-14"
+  heure: string;     // ex: "20h30"
+  lieu: string;
+  adresse: string;
+  places: number;
+}
+
 export interface Spectacle {
   id: string;
   titre: string;
   auteur: string;
   description: string;
   descriptionCourte: string;
-  date: string;             // ex: "Sam. 14 mars"
-  dateISO: string;          // ex: "2026-03-14"
-  heure: string;            // ex: "20h30"
-  lieu: string;
-  adresse: string;
-  duree: string;            // ex: "1h45"
-  prix: string;             // ex: "10 € / 6 €"
+  // Anciens champs conservés en optionnel pour rétrocompatibilité
+  date?: string;             // ex: "Sam. 14 mars"
+  dateISO?: string;          // ex: "2026-03-14"
+  heure?: string;            // ex: "20h30"
+  lieu?: string;
+  adresse?: string;
+  places?: number;           // places restantes
+  // Nouveau tableau de représentations
+  representations?: Representation[];
+  duree: string;             // ex: "1h45"
+  prix: string;              // ex: "10 €"
   prixReduit: string;
   genres: GenreSpectacle[];
   tone: ToneCouleur;
   emoji: string;
-  image: string;            // chemin ou placeholder
+  image: string;             // chemin ou placeholder
   galerie: string[];
   lienVideo?: string;
   pmr: boolean;
-  places: number;           // places restantes (simulé)
-  saison: string;           // ex: "2025-2026"
+  saison: string;            // ex: "2025-2026"
   slug: string;
 }
 

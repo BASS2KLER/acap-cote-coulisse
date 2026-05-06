@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import type { Spectacle } from "@/lib/types";
-import { getToneVars, isComplet } from "@/lib/utils";
+import { getToneVars, isComplet, getPrimaryRepresentation } from "@/lib/utils";
 
 interface SpectacleCardProps {
   spectacle: Spectacle;
@@ -12,7 +12,9 @@ interface SpectacleCardProps {
 
 export default function SpectacleCard({ spectacle, compact }: SpectacleCardProps) {
   const { accentDeep, accentWash, accentClass } = getToneVars(spectacle.tone);
-  const complet = isComplet(spectacle.places);
+  const primaryRepr = getPrimaryRepresentation(spectacle);
+  const complet = isComplet(primaryRepr.places);
+  const nbDatesSupp = (spectacle.representations?.length ?? 0) - 1;
 
   return (
     <motion.article
@@ -106,8 +108,26 @@ export default function SpectacleCard({ spectacle, compact }: SpectacleCardProps
               fontSize: "0.8125rem",
               color: "var(--ink-soft)",
               margin: "0 0 2px",
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
             }}>
-              {spectacle.date} · {spectacle.heure}
+              {primaryRepr.date} · {primaryRepr.heure}
+              {nbDatesSupp > 0 && (
+                <span style={{
+                  display: "inline-block",
+                  fontFamily: "var(--font-worksans, Work Sans, system-ui, sans-serif)",
+                  fontSize: "0.6875rem",
+                  fontWeight: 700,
+                  background: accentDeep,
+                  color: "#fff",
+                  padding: "1px 7px",
+                  borderRadius: 999,
+                  letterSpacing: "0.02em",
+                }}>
+                  +{nbDatesSupp}
+                </span>
+              )}
             </p>
             <p style={{
               fontFamily: "var(--font-worksans, Work Sans, system-ui, sans-serif)",

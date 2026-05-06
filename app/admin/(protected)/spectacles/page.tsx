@@ -6,8 +6,8 @@ import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
 import { Pencil, Trash2, Plus, AlertTriangle } from "lucide-react";
 import { useState } from "react";
-import { getToneClasses } from "@/lib/utils";
-import type { ToneCouleur } from "@/lib/types";
+import { getToneClasses, getPrimaryRepresentation } from "@/lib/utils";
+import type { ToneCouleur, Representation } from "@/lib/types";
 
 export default function AdminSpectaclesPage() {
   const spectacles = useQuery(api.spectacles.list);
@@ -46,8 +46,10 @@ export default function AdminSpectaclesPage() {
       )}
 
       <div className="flex flex-col gap-4">
-        {spectacles?.map((s: { _id: string; titre: string; auteur: string; date: string; heure: string; lieu: string; places: number; tone: string; emoji: string; imageUrl?: string | null }) => {
+        {spectacles?.map((s: { _id: string; titre: string; auteur: string; date?: string; dateISO?: string; heure?: string; lieu?: string; adresse?: string; places?: number; representations?: Representation[]; tone: string; emoji: string; imageUrl?: string | null }) => {
           const tone = getToneClasses(s.tone as ToneCouleur);
+          const primaryRepr = getPrimaryRepresentation(s);
+          const nbReprs = s.representations?.length ?? 0;
           return (
             <div key={s._id}
               className={`bg-creme-pale border-2 border-encre rounded-xl p-5 shadow-card flex items-center gap-5`}>
@@ -70,10 +72,18 @@ export default function AdminSpectaclesPage() {
                 </div>
                 <div className="text-sm text-encre-douce">{s.auteur}</div>
                 <div className="flex flex-wrap gap-3 mt-1 text-sm text-encre">
-                  <span>📅 {s.date} à {s.heure}</span>
-                  <span>📍 {s.lieu}</span>
-                  <span className={s.places === 0 ? "text-tomate-600 font-bold" : ""}>
-                    🎟 {s.places === 0 ? "Complet" : `${s.places} places`}
+                  {nbReprs > 1 ? (
+                    <span className="font-bold text-encre-douce">
+                      📅 {nbReprs} représentations · prochaine : {primaryRepr.date} à {primaryRepr.heure}
+                    </span>
+                  ) : (
+                    <>
+                      <span>📅 {primaryRepr.date} à {primaryRepr.heure}</span>
+                      <span>📍 {primaryRepr.lieu}</span>
+                    </>
+                  )}
+                  <span className={primaryRepr.places === 0 ? "text-tomate-600 font-bold" : ""}>
+                    🎟 {primaryRepr.places === 0 ? "Complet" : `${primaryRepr.places} places`}
                   </span>
                 </div>
               </div>

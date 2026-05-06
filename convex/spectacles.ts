@@ -1,5 +1,6 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
+import { representationValidator } from "./schema";
 
 // ── Queries publiques ──────────────────────────────────────────
 
@@ -13,7 +14,7 @@ export const list = query({
 
     return Promise.all(
       spectacles
-        .sort((a, b) => (a.dateISO > b.dateISO ? 1 : -1))
+        .sort((a, b) => ((a.dateISO ?? "") > (b.dateISO ?? "") ? 1 : -1))
         .map(async (s) => ({
           ...s,
           imageUrl: s.imageStorageId
@@ -62,11 +63,7 @@ export const create = mutation({
     auteur: v.string(),
     description: v.string(),
     descriptionCourte: v.string(),
-    date: v.string(),
-    dateISO: v.string(),
-    heure: v.string(),
-    lieu: v.string(),
-    adresse: v.string(),
+    representations: v.array(representationValidator),
     duree: v.string(),
     prix: v.string(),
     prixReduit: v.string(),
@@ -76,7 +73,6 @@ export const create = mutation({
     imageStorageId: v.optional(v.id("_storage")),
     lienVideo: v.optional(v.string()),
     pmr: v.boolean(),
-    places: v.number(),
     saison: v.string(),
   },
   handler: async (ctx, args) => {
@@ -95,11 +91,7 @@ export const update = mutation({
     auteur: v.optional(v.string()),
     description: v.optional(v.string()),
     descriptionCourte: v.optional(v.string()),
-    date: v.optional(v.string()),
-    dateISO: v.optional(v.string()),
-    heure: v.optional(v.string()),
-    lieu: v.optional(v.string()),
-    adresse: v.optional(v.string()),
+    representations: v.optional(v.array(representationValidator)),
     duree: v.optional(v.string()),
     prix: v.optional(v.string()),
     prixReduit: v.optional(v.string()),
@@ -109,7 +101,6 @@ export const update = mutation({
     imageStorageId: v.optional(v.id("_storage")),
     lienVideo: v.optional(v.string()),
     pmr: v.optional(v.boolean()),
-    places: v.optional(v.number()),
     saison: v.optional(v.string()),
   },
   handler: async (ctx, { id, ...fields }) => {
@@ -158,6 +149,31 @@ export const remove = mutation({
       for (const sid of s.galerieStorageIds) await ctx.storage.delete(sid);
     }
     await ctx.db.delete(id);
+  },
+});
+
+// Migration : convertit les 4 spectacles existants vers le nouveau format representations
+export const migrateToRepresentations = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const all = await ctx.db.query("spectacles").collect();
+    let count = 0;
+    for (const s of all) {
+      if (!s.representations && s.date) {
+        await ctx.db.patch(s._id, {
+          representations: [{
+            date: s.date,
+            dateISO: s.dateISO ?? "",
+            heure: s.heure ?? "",
+            lieu: s.lieu ?? "",
+            adresse: s.adresse ?? "",
+            places: s.places ?? 0,
+          }],
+        });
+        count++;
+      }
+    }
+    return { migrated: count };
   },
 });
 

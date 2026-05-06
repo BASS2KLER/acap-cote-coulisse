@@ -117,7 +117,7 @@ export function getSpectacleBySlug(slug: string): Spectacle | undefined {
 
 export function getSpectaclesProchains(): Spectacle[] {
   const today = new Date().toISOString().split("T")[0];
-  return SPECTACLES.filter((s) => s.dateISO >= today);
+  return SPECTACLES.filter((s) => (s.dateISO ?? "") >= today);
 }
 
 export function getAllSlugs(): string[] {

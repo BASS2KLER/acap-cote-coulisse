@@ -1,17 +1,21 @@
 "use client";
 
+import { useState } from "react";
 import { useParams } from "next/navigation";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { getToneVars, isComplet, getPlacesLabel } from "@/lib/utils";
-import type { ToneCouleur, GenreSpectacle } from "@/lib/types";
+import { getToneVars, isComplet, getPlacesLabel, getPrimaryRepresentation } from "@/lib/utils";
+import type { ToneCouleur, GenreSpectacle, Representation } from "@/lib/types";
 import ModalReservation from "@/components/spectacles/ModalReservation";
 
 export default function SpectacleDetailPage() {
   const { slug } = useParams<{ slug: string }>();
   const raw = useQuery(api.spectacles.getBySlug, { slug });
+
+  // Index de la représentation sélectionnée dans le panneau réservation
+  const [reprIndex, setReprIndex] = useState(0);
 
   if (raw === undefined) {
     return (
@@ -30,10 +34,22 @@ export default function SpectacleDetailPage() {
     galerie: (raw.galerieUrls ?? []).filter((u): u is string => u !== null),
     genres: raw.genres as GenreSpectacle[],
     tone: raw.tone as ToneCouleur,
+    representations: raw.representations as Representation[] | undefined,
   };
 
   const { accentDeep, accentWash, accentClass } = getToneVars(spectacle.tone);
-  const complet = isComplet(spectacle.places);
+
+  // Représentations disponibles
+  const representations: Representation[] = spectacle.representations ?? [];
+  const primaryRepr = getPrimaryRepresentation(spectacle);
+  const multipleReprs = representations.length > 1;
+
+  // Représentation affichée dans le panneau réservation
+  const reprAffichee: Representation = multipleReprs
+    ? (representations[reprIndex] ?? primaryRepr)
+    : primaryRepr;
+
+  const complet = isComplet(reprAffichee.places);
 
   return (
     <div className={accentClass}>
@@ -50,7 +66,7 @@ export default function SpectacleDetailPage() {
                 {g}
               </span>
             ))}
-            {complet && (
+            {complet && !multipleReprs && (
               <span style={{ display: "inline-block", fontFamily: "var(--font-worksans)", fontSize: "0.6875rem", fontWeight: 600, textTransform: "uppercase" as const, letterSpacing: "0.14em", color: "var(--paper)", background: "var(--ink)", padding: "3px 10px", borderRadius: 999 }}>
                 Complet
               </span>
@@ -64,13 +80,35 @@ export default function SpectacleDetailPage() {
             {spectacle.auteur}
           </p>
 
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "8px 24px", fontFamily: "var(--font-worksans)", fontSize: "0.875rem", color: "var(--ink-soft)" }}>
-            <span>📅 <strong style={{ color: "var(--ink)" }}>{spectacle.date} à {spectacle.heure}</strong></span>
-            <span>📍 {spectacle.lieu}</span>
+          {/* Infos de base (duree, prix, PMR) */}
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "8px 24px", fontFamily: "var(--font-worksans)", fontSize: "0.875rem", color: "var(--ink-soft)", marginBottom: multipleReprs ? 16 : 0 }}>
             <span>⏱ {spectacle.duree}</span>
             <span>🎟 <strong style={{ color: "var(--ink)" }}>{spectacle.prix}{spectacle.prixReduit && ` / ${spectacle.prixReduit}`}</strong></span>
             {spectacle.pmr && <span>♿ Accès PMR</span>}
           </div>
+
+          {/* Liste de toutes les représentations si plusieurs */}
+          {multipleReprs ? (
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              <span style={{ fontFamily: "var(--font-worksans)", fontSize: "0.75rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: accentDeep, marginBottom: 4 }}>
+                {representations.length} représentations
+              </span>
+              {representations.map((r, i) => (
+                <div key={i} style={{ display: "flex", flexWrap: "wrap", gap: "4px 20px", fontFamily: "var(--font-worksans)", fontSize: "0.875rem", color: "var(--ink-soft)" }}>
+                  <span>📅 <strong style={{ color: "var(--ink)" }}>{r.date} à {r.heure}</strong></span>
+                  <span>📍 {r.lieu}</span>
+                  {r.places === 0 && (
+                    <span style={{ fontWeight: 700, color: "var(--ink)" }}>— Complet</span>
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "8px 24px", fontFamily: "var(--font-worksans)", fontSize: "0.875rem", color: "var(--ink-soft)" }}>
+              <span>📅 <strong style={{ color: "var(--ink)" }}>{primaryRepr.date} à {primaryRepr.heure}</strong></span>
+              <span>📍 {primaryRepr.lieu}</span>
+            </div>
+          )}
         </div>
       </div>
 
@@ -118,11 +156,43 @@ export default function SpectacleDetailPage() {
               On vous garde une place ?
             </h2>
 
+            {/* Sélecteur de représentation si plusieurs */}
+            {multipleReprs && (
+              <div style={{ marginBottom: 16 }}>
+                <label style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                  <span style={{ fontFamily: "var(--font-worksans)", fontSize: "0.8125rem", fontWeight: 600, color: "var(--ink)" }}>
+                    Choisir une date
+                  </span>
+                  <select
+                    value={reprIndex}
+                    onChange={(e) => setReprIndex(parseInt(e.target.value))}
+                    style={{
+                      fontFamily: "var(--font-worksans, Work Sans, system-ui, sans-serif)",
+                      fontSize: "0.875rem",
+                      padding: "8px 12px",
+                      border: "1px solid var(--ink-line)",
+                      borderRadius: 6,
+                      background: "var(--paper)",
+                      color: "var(--ink)",
+                      width: "100%",
+                      outline: "none",
+                    }}
+                  >
+                    {representations.map((r, i) => (
+                      <option key={i} value={i}>
+                        {r.date} à {r.heure}{r.places === 0 ? " — Complet" : ""}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+            )}
+
             <div style={{ marginBottom: 24 }}>
               {[
-                { label: "Date", value: spectacle.date },
-                { label: "Heure", value: spectacle.heure },
-                { label: "Lieu", value: spectacle.lieu },
+                { label: "Date", value: reprAffichee.date },
+                { label: "Heure", value: reprAffichee.heure },
+                { label: "Lieu", value: reprAffichee.lieu },
                 { label: "Tarif adulte", value: spectacle.prix },
                 { label: "Tarif réduit", value: spectacle.prixReduit },
               ].map(({ label, value }) => (
@@ -135,9 +205,9 @@ export default function SpectacleDetailPage() {
 
             {!complet ? (
               <>
-                {spectacle.places <= 15 && (
+                {reprAffichee.places <= 15 && (
                   <p style={{ fontFamily: "var(--font-worksans)", fontSize: "0.875rem", fontWeight: 600, color: "var(--rose-deep)", margin: "0 0 16px" }}>
-                    ⚠️ {getPlacesLabel(spectacle.places)}
+                    ⚠️ {getPlacesLabel(reprAffichee.places)}
                   </p>
                 )}
                 <ModalReservation spectacle={spectacle} />
@@ -145,8 +215,8 @@ export default function SpectacleDetailPage() {
             ) : (
               <div style={{ textAlign: "center", padding: "16px 0" }}>
                 <div style={{ fontSize: "2rem", marginBottom: 8 }}>😢</div>
-                <p style={{ fontFamily: "var(--font-worksans)", fontWeight: 600, fontSize: "0.9375rem", color: "var(--ink)", margin: "0 0 6px" }}>Ce spectacle est complet.</p>
-                <p style={{ fontFamily: "var(--font-worksans)", fontSize: "0.8125rem", color: "var(--ink-muted)", margin: 0 }}>Contactez-nous pour être sur liste d'attente.</p>
+                <p style={{ fontFamily: "var(--font-worksans)", fontWeight: 600, fontSize: "0.9375rem", color: "var(--ink)", margin: "0 0 6px" }}>Cette représentation est complète.</p>
+                <p style={{ fontFamily: "var(--font-worksans)", fontSize: "0.8125rem", color: "var(--ink-muted)", margin: 0 }}>Contactez-nous pour être sur liste d&apos;attente.</p>
               </div>
             )}
 
