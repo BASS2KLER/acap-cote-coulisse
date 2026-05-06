@@ -37,13 +37,13 @@ export default function Navbar() {
             href="/"
             style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none", flexShrink: 0 }}
           >
-            <div style={{ width: 52, height: 52, borderRadius: 6, overflow: "hidden", border: "1px solid var(--ink-line)", flexShrink: 0 }}>
+            <div style={{ width: 52, height: 52, flexShrink: 0 }}>
               <Image
-                src="/logo-acap.jpg"
+                src="/logo-acap-v2.png"
                 alt=""
                 width={52}
                 height={52}
-                style={{ objectFit: "cover", width: "100%", height: "100%" }}
+                style={{ objectFit: "contain", width: "100%", height: "100%" }}
               />
             </div>
             <div>
