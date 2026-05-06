@@ -132,7 +132,8 @@ export default function SpectacleForm({ initial, mode }: SpectacleFormProps) {
       if (mode === "create") {
         await createMutation(data as Parameters<typeof createMutation>[0]);
       } else if (initial?._id) {
-        await updateMutation({ id: initial._id, ...data } as Parameters<typeof updateMutation>[0]);
+        const { slug: _slug, ...updateData } = data as typeof data & { slug: string };
+        await updateMutation({ id: initial._id, ...updateData } as Parameters<typeof updateMutation>[0]);
       }
       router.push("/admin/spectacles");
     } finally {
