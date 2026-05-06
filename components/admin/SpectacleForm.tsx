@@ -348,6 +348,48 @@ export default function SpectacleForm({ initial, mode }: SpectacleFormProps) {
         </div>
       </div>
 
+      {/* Vidéo YouTube */}
+      <div className="bg-creme-pale border-2 border-encre rounded-xl p-6 shadow-card space-y-4">
+        <h2 className="font-display font-bold text-xl text-encre mb-2"
+          style={{ fontFamily: "var(--font-fraunces, Fraunces, serif)" }}>
+          Vidéo YouTube
+        </h2>
+        <label className="flex flex-col gap-1.5">
+          <span className="font-bold text-sm text-encre">URL de la vidéo</span>
+          <input
+            value={form.lienVideo}
+            onChange={(e) => set("lienVideo", e.target.value)}
+            className="admin-input"
+            placeholder="https://www.youtube.com/watch?v=..."
+            type="url"
+          />
+          <span className="text-xs text-gris-poussiere">Lien YouTube du teaser ou de la captation du spectacle</span>
+        </label>
+        {form.lienVideo && (() => {
+          const match = form.lienVideo.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
+          const ytId = match?.[1];
+          return ytId ? (
+            <div className="rounded-lg overflow-hidden border-2 border-encre aspect-video">
+              <iframe
+                src={`https://www.youtube.com/embed/${ytId}`}
+                className="w-full h-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                title="Aperçu vidéo"
+              />
+            </div>
+          ) : (
+            <p className="text-xs text-tomate-600 font-bold">URL YouTube non reconnue</p>
+          );
+        })()}
+        {form.lienVideo && (
+          <button type="button" onClick={() => set("lienVideo", "")}
+            className="text-xs text-tomate-600 hover:underline">
+            Supprimer la vidéo
+          </button>
+        )}
+      </div>
+
       {/* Actions */}
       <div className="flex gap-4 pt-2">
         <button type="submit" disabled={saving} className="btn-acap disabled:opacity-60">
