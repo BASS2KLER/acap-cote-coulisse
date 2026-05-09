@@ -10,9 +10,9 @@ export default function SpectaclesListe() {
 
   if (raw === undefined) {
     return (
-      <div className="flex flex-col gap-6">
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 24 }}>
         {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="h-40 rounded-xl bg-creme-deep animate-pulse border-2 border-filet" />
+          <div key={i} style={{ height: 320, borderRadius: 16, background: "var(--cream-deep)", border: "1px solid var(--sand)", opacity: 0.6 }} />
         ))}
       </div>
     );
@@ -28,9 +28,9 @@ export default function SpectaclesListe() {
   }));
 
   return (
-    <div className="flex flex-col gap-6">
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 24 }}>
       {spectacles.map((spectacle) => (
-        <SpectacleCard key={spectacle.id} spectacle={spectacle} />
+        <SpectacleCard key={spectacle.id} spectacle={spectacle} compact />
       ))}
     </div>
   );

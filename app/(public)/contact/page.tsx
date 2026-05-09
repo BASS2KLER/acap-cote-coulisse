@@ -23,7 +23,7 @@ const fieldStyle: React.CSSProperties = {
   gap: 6,
 };
 const labelStyle: React.CSSProperties = {
-  fontFamily: "var(--font-worksans)",
+  fontFamily: "var(--font-nunito, 'Nunito Sans', sans-serif)",
   fontSize: "0.8125rem",
   fontWeight: 600,
   color: "var(--ink)",
@@ -49,13 +49,13 @@ export default function ContactPage() {
       {/* En-tête */}
       <div style={{ borderBottom: "1px solid var(--ink-line)", padding: "48px 0" }}>
         <div style={S}>
-          <span className="kicker" style={{ marginBottom: 12, display: "block", color: "var(--rose-deep)" }}>
+          <span className="kicker" style={{ marginBottom: 12, display: "block", color: "var(--brick)" }}>
             ✉ Contact
           </span>
-          <h1 style={{ fontFamily: "var(--font-fraunces, Fraunces, serif)", fontWeight: 600, fontSize: "clamp(2.5rem, 5vw, 4rem)", lineHeight: 1, letterSpacing: "-0.025em", color: "var(--ink)", margin: "0 0 16px" }}>
+          <h1 style={{ fontFamily: "var(--font-abril, 'Abril Fatface', serif)", fontWeight: 600, fontSize: "clamp(2.5rem, 5vw, 4rem)", lineHeight: 1, letterSpacing: "-0.025em", color: "var(--ink)", margin: "0 0 16px" }}>
             Nous contacter
           </h1>
-          <p style={{ fontFamily: "var(--font-worksans)", fontSize: "1.0625rem", lineHeight: 1.6, color: "var(--ink-soft)", margin: 0 }}>
+          <p style={{ fontFamily: "var(--font-nunito, 'Nunito Sans', sans-serif)", fontSize: "1.0625rem", lineHeight: 1.6, color: "var(--ink-soft)", margin: 0 }}>
             Séance d'essai, inscription ou simple question — on répond vite.
           </p>
         </div>
@@ -69,7 +69,7 @@ export default function ContactPage() {
               key={t.id}
               onClick={() => { setTab(t.id); setEnvoyé(false); }}
               style={{
-                fontFamily: "var(--font-worksans)",
+                fontFamily: "var(--font-nunito, 'Nunito Sans', sans-serif)",
                 fontSize: "0.875rem",
                 fontWeight: tab === t.id ? 600 : 400,
                 padding: "10px 18px",
@@ -96,12 +96,12 @@ export default function ContactPage() {
 
                 {/* Bannière info par onglet */}
                 {tab === "essai" && (
-                  <div style={{ background: "var(--moutarde-wash)", border: "1px solid var(--moutarde-deep)", borderRadius: 4, padding: "12px 16px", fontFamily: "var(--font-worksans)", fontSize: "0.9375rem", color: "var(--ink)" }}>
+                  <div style={{ background: "var(--cream-deep)", border: "1px solid var(--brick)", borderRadius: 4, padding: "12px 16px", fontFamily: "var(--font-nunito, 'Nunito Sans', sans-serif)", fontSize: "0.9375rem", color: "var(--ink)" }}>
                     ✨ La première séance est <strong>entièrement gratuite</strong>. Choisissez un créneau et on confirme par retour.
                   </div>
                 )}
                 {tab === "inscription" && (
-                  <div style={{ background: "var(--mousse-wash)", border: "1px solid var(--mousse-deep)", borderRadius: 4, padding: "12px 16px", fontFamily: "var(--font-worksans)", fontSize: "0.875rem", color: "var(--ink)" }}>
+                  <div style={{ background: "var(--cream)", border: "1px solid var(--sand-deep)", borderRadius: 4, padding: "12px 16px", fontFamily: "var(--font-nunito, 'Nunito Sans', sans-serif)", fontSize: "0.875rem", color: "var(--ink)" }}>
                     📌 <strong>Rappel tarifs :</strong> Adhésion 70€ + caution costumes 50€ + cours au trimestre (60€ à 165€ selon durée).
                   </div>
                 )}
@@ -176,8 +176,8 @@ export default function ContactPage() {
                       "Je souhaite être ajouté·e au groupe WhatsApp de l'atelier.",
                     ].map((text) => (
                       <label key={text} style={{ display: "flex", alignItems: "flex-start", gap: 10, cursor: "pointer" }}>
-                        <input type="checkbox" style={{ marginTop: 3, width: 16, height: 16, accentColor: "var(--mousse-deep)", flexShrink: 0 }} />
-                        <span style={{ fontFamily: "var(--font-worksans)", fontSize: "0.875rem", color: "var(--ink-soft)" }}>{text}</span>
+                        <input type="checkbox" style={{ marginTop: 3, width: 16, height: 16, accentColor: "var(--sand-deep)", flexShrink: 0 }} />
+                        <span style={{ fontFamily: "var(--font-nunito, 'Nunito Sans', sans-serif)", fontSize: "0.875rem", color: "var(--ink-soft)" }}>{text}</span>
                       </label>
                     ))}
                   </div>
@@ -220,10 +220,10 @@ export default function ContactPage() {
             ) : (
               <div style={{ textAlign: "center", padding: "48px 0" }}>
                 <div style={{ fontSize: "3rem", marginBottom: 16 }}>🎭</div>
-                <h2 style={{ fontFamily: "var(--font-fraunces, Fraunces, serif)", fontStyle: "italic", fontWeight: 500, fontSize: "2rem", color: "var(--ink)", margin: "0 0 12px" }}>
+                <h2 style={{ fontFamily: "var(--font-abril, 'Abril Fatface', serif)", fontStyle: "italic", fontWeight: 500, fontSize: "2rem", color: "var(--ink)", margin: "0 0 12px" }}>
                   Message envoyé !
                 </h2>
-                <p style={{ fontFamily: "var(--font-worksans)", fontSize: "1rem", color: "var(--ink-soft)", margin: "0 0 24px" }}>
+                <p style={{ fontFamily: "var(--font-nunito, 'Nunito Sans', sans-serif)", fontSize: "1rem", color: "var(--ink-soft)", margin: "0 0 24px" }}>
                   On revient vers vous très vite.
                 </p>
                 <button onClick={() => setEnvoyé(false)} className="btn-acap btn-acap--secondary">
@@ -235,40 +235,40 @@ export default function ContactPage() {
 
           {/* Coordonnées */}
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-            <div style={{ background: "#FBF7EC", border: "1px solid var(--ink-line)", borderRadius: 6, padding: 24, boxShadow: "0 2px 0 rgba(42,39,34,0.04), 0 8px 18px -10px rgba(42,39,34,0.12)" }}>
-              <h2 style={{ fontFamily: "var(--font-fraunces, Fraunces, serif)", fontWeight: 600, fontSize: "1.125rem", color: "var(--ink)", margin: "0 0 20px" }}>
+            <div style={{ background: "var(--white)", border: "1px solid var(--ink-line)", borderRadius: 6, padding: 24, boxShadow: "0 2px 0 rgba(42,39,34,0.04), 0 8px 18px -10px rgba(42,39,34,0.12)" }}>
+              <h2 style={{ fontFamily: "var(--font-abril, 'Abril Fatface', serif)", fontWeight: 600, fontSize: "1.125rem", color: "var(--ink)", margin: "0 0 20px" }}>
                 Nos coordonnées
               </h2>
-              <div style={{ display: "flex", flexDirection: "column", gap: 14, fontFamily: "var(--font-worksans)", fontSize: "0.875rem" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 14, fontFamily: "var(--font-nunito, 'Nunito Sans', sans-serif)", fontSize: "0.875rem" }}>
                 <div>
                   <p style={{ fontWeight: 600, color: "var(--ink)", margin: "0 0 2px" }}>Le Jardin d'Hélène</p>
                   <p style={{ color: "var(--ink-soft)", margin: 0, lineHeight: 1.6 }}>6 rue Auguste Rey<br />95390 Saint-Prix</p>
                 </div>
                 <div>
                   <p style={{ fontWeight: 600, color: "var(--ink)", margin: "0 0 2px" }}>Hélène Toutain</p>
-                  <a href="tel:+33681670498" style={{ color: "var(--rose-deep)" }}>06 81 67 04 98</a>
+                  <a href="tel:+33681670498" style={{ color: "var(--brick)" }}>06 81 67 04 98</a>
                 </div>
                 <div>
                   <p style={{ fontWeight: 600, color: "var(--ink)", margin: "0 0 2px" }}>Florence Guillot</p>
-                  <a href="tel:+33633622042" style={{ color: "var(--rose-deep)" }}>06 33 62 20 42</a>
+                  <a href="tel:+33633622042" style={{ color: "var(--brick)" }}>06 33 62 20 42</a>
                 </div>
                 <div>
                   <p style={{ fontWeight: 600, color: "var(--ink)", margin: "0 0 2px" }}>E-mail</p>
-                  <a href="mailto:lacap95@free.fr" style={{ color: "var(--rose-deep)" }}>lacap95@free.fr</a>
+                  <a href="mailto:lacap95@free.fr" style={{ color: "var(--brick)" }}>lacap95@free.fr</a>
                 </div>
               </div>
             </div>
 
-            <div style={{ background: "var(--moutarde-wash)", border: "1px solid var(--moutarde-deep)", borderRadius: 6, padding: 20 }}>
-              <p style={{ fontFamily: "var(--font-worksans)", fontWeight: 600, fontSize: "0.9375rem", color: "var(--ink)", margin: "0 0 6px" }}>✨ 1re séance offerte</p>
-              <p style={{ fontFamily: "var(--font-worksans)", fontSize: "0.8125rem", color: "var(--ink-soft)", margin: 0 }}>
+            <div style={{ background: "var(--cream-deep)", border: "1px solid var(--brick)", borderRadius: 6, padding: 20 }}>
+              <p style={{ fontFamily: "var(--font-nunito, 'Nunito Sans', sans-serif)", fontWeight: 600, fontSize: "0.9375rem", color: "var(--ink)", margin: "0 0 6px" }}>✨ 1re séance offerte</p>
+              <p style={{ fontFamily: "var(--font-nunito, 'Nunito Sans', sans-serif)", fontSize: "0.8125rem", color: "var(--ink-soft)", margin: 0 }}>
                 Venez essayer sans engagement. On vous accueille avec plaisir.
               </p>
             </div>
 
-            <div style={{ background: "var(--lavande-wash)", border: "1px solid var(--lavande-deep)", borderRadius: 6, padding: 20 }}>
-              <p style={{ fontFamily: "var(--font-worksans)", fontWeight: 600, fontSize: "0.9375rem", color: "var(--ink)", margin: "0 0 6px" }}>📁 Attestation CE</p>
-              <p style={{ fontFamily: "var(--font-worksans)", fontSize: "0.8125rem", color: "var(--ink-soft)", margin: 0 }}>
+            <div style={{ background: "var(--cream-deep)", border: "1px solid var(--sand-deep)", borderRadius: 6, padding: 20 }}>
+              <p style={{ fontFamily: "var(--font-nunito, 'Nunito Sans', sans-serif)", fontWeight: 600, fontSize: "0.9375rem", color: "var(--ink)", margin: "0 0 6px" }}>📁 Attestation CE</p>
+              <p style={{ fontFamily: "var(--font-nunito, 'Nunito Sans', sans-serif)", fontSize: "0.8125rem", color: "var(--ink-soft)", margin: 0 }}>
                 Disponible sur demande pour financement par votre comité d'entreprise.
               </p>
             </div>

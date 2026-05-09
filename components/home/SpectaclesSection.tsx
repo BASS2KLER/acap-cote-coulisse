@@ -20,51 +20,61 @@ export default function SpectaclesSection() {
 
   return (
     <section id="saison" style={{
-      background: "var(--paper-warm)",
-      padding: "64px 0",
+      background: "var(--cream)",
+      padding: "80px 0",
     }}>
       <div style={{ maxWidth: 1280, margin: "0 auto", padding: "0 48px" }}>
 
         {/* En-tête */}
-        <header style={{ maxWidth: 600, marginBottom: 40 }}>
-          <span className="kicker" style={{ marginBottom: 8, display: "block" }}>Programme</span>
+        <motion.header
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.4 }}
+          style={{ maxWidth: 600, marginBottom: 48 }}
+        >
+          <span className="kicker" style={{ marginBottom: 12, display: "block" }}>Programme</span>
           <h2 style={{
-            fontFamily: "var(--font-fraunces, Fraunces, serif)",
-            fontWeight: 500,
-            fontSize: "clamp(2rem, 4vw, 2.5rem)",
-            lineHeight: 1.08,
-            letterSpacing: "-0.02em",
+            fontFamily: "var(--font-abril, 'Abril Fatface', serif)",
+            fontWeight: 400,
+            fontSize: "clamp(2rem, 4vw, 2.75rem)",
+            lineHeight: 1.05,
+            letterSpacing: "-0.01em",
             color: "var(--ink)",
-            margin: "0 0 12px",
+            margin: "0 0 14px",
           }}>
             La saison, mois par mois
           </h2>
           <p style={{
-            fontFamily: "var(--font-worksans, Work Sans, system-ui, sans-serif)",
+            fontFamily: "var(--font-nunito, 'Nunito Sans', sans-serif)",
             fontSize: "1.0625rem",
+            fontWeight: 500,
             lineHeight: 1.6,
             color: "var(--ink-soft)",
             margin: 0,
           }}>
             Des spectacles pour rire, frémir, et se retrouver à Saint-Prix.
           </p>
-        </header>
+        </motion.header>
 
-        {/* Grille 3 colonnes */}
+        {/* Grille */}
         {raw === undefined ? (
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 28 }}>
             {[1, 2, 3].map((i) => (
               <div key={i} style={{
                 height: 340,
-                borderRadius: 6,
-                background: "var(--paper-deep)",
-                animation: "pulse 2s infinite",
-                border: "1px solid var(--ink-line)",
+                borderRadius: 16,
+                background: "var(--cream-deep)",
+                border: "1px solid var(--sand)",
               }} />
             ))}
           </div>
         ) : prochains.length === 0 ? (
-          <p style={{ fontFamily: "var(--font-worksans)", color: "var(--ink-muted)", fontStyle: "italic" }}>
+          <p style={{
+            fontFamily: "var(--font-nunito, 'Nunito Sans', sans-serif)",
+            color: "var(--ink-muted)",
+            fontStyle: "italic",
+          }}>
             La saison se prépare — revenez bientôt.
           </p>
         ) : (
@@ -72,10 +82,10 @@ export default function SpectaclesSection() {
             {prochains.map((spectacle, i) => (
               <motion.div
                 key={spectacle.id}
-                initial={{ opacity: 0, y: 16 }}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.08 }}
+                transition={{ delay: i * 0.08, duration: 0.4 }}
               >
                 <SpectacleCard spectacle={spectacle} compact />
               </motion.div>
@@ -84,12 +94,8 @@ export default function SpectaclesSection() {
         )}
 
         {/* Lien voir tout */}
-        <div style={{ marginTop: 40, textAlign: "center" }}>
-          <Link
-            href="/spectacles"
-            className="btn-acap btn-acap--secondary"
-            style={{ borderColor: "var(--ink)", color: "var(--ink)", background: "transparent" }}
-          >
+        <div style={{ marginTop: 48, textAlign: "center" }}>
+          <Link href="/spectacles" className="btn-acap btn-acap--ghost">
             Voir tous les spectacles →
           </Link>
         </div>

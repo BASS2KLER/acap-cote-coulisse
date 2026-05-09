@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import type { Spectacle } from "@/lib/types";
-import { getToneVars, isComplet, getPrimaryRepresentation } from "@/lib/utils";
+import { isComplet, getPrimaryRepresentation } from "@/lib/utils";
 
 interface SpectacleCardProps {
   spectacle: Spectacle;
@@ -11,50 +11,36 @@ interface SpectacleCardProps {
 }
 
 export default function SpectacleCard({ spectacle, compact }: SpectacleCardProps) {
-  const { accentDeep, accentWash, accentClass } = getToneVars(spectacle.tone);
   const primaryRepr = getPrimaryRepresentation(spectacle);
   const complet = isComplet(primaryRepr.places);
   const nbDatesSupp = (spectacle.representations?.length ?? 0) - 1;
 
   return (
     <motion.article
-      whileHover={{ y: -3, rotate: -0.6 }}
-      style={{ cursor: "pointer" }}
+      whileHover={{ y: -4 }}
+      style={{ cursor: "pointer", height: "100%" }}
       transition={{ duration: 0.24, ease: [0.34, 1.36, 0.64, 1] }}
-      className={accentClass}
     >
       <Link
         href={`/spectacles/${spectacle.slug}`}
-        style={{ textDecoration: "none", display: "block" }}
+        style={{ textDecoration: "none", display: "block", height: "100%" }}
       >
-        <div style={{
-          background: "#FBF7EC",
-          border: "1px solid var(--ink-line)",
-          borderRadius: 6,
+        <div className="card-spectacle" style={{
           overflow: "hidden",
-          boxShadow: "0 2px 0 rgba(42,39,34,0.05), 0 8px 18px -10px rgba(42,39,34,0.18)",
-          transition: "box-shadow 240ms",
           display: "flex",
           flexDirection: "column",
           height: "100%",
-        }}
-        onMouseEnter={(e) => {
-          (e.currentTarget as HTMLDivElement).style.boxShadow = `6px 10px 0 var(--accent-wash)`;
-        }}
-        onMouseLeave={(e) => {
-          (e.currentTarget as HTMLDivElement).style.boxShadow = "0 2px 0 rgba(42,39,34,0.05), 0 8px 18px -10px rgba(42,39,34,0.18)";
-        }}
-        >
+        }}>
           {/* Zone image */}
           <div style={{
             aspectRatio: "4/3",
-            background: accentWash,
-            borderBottom: "1px solid var(--ink-line)",
+            background: "var(--brick-wash)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             position: "relative",
             padding: 16,
+            overflow: "hidden",
           }}>
             {spectacle.image ? (
               // eslint-disable-next-line @next/next/no-img-element
@@ -65,49 +51,60 @@ export default function SpectacleCard({ spectacle, compact }: SpectacleCardProps
               />
             ) : (
               <span style={{
-                fontFamily: "var(--font-fraunces, Fraunces, serif)",
+                fontFamily: "var(--font-abril, 'Abril Fatface', serif)",
                 fontStyle: "italic",
                 fontSize: "0.875rem",
-                color: "var(--ink-muted)",
+                color: "var(--brick)",
                 letterSpacing: "0.04em",
               }}>
                 {spectacle.emoji} illustration · à venir
               </span>
             )}
-            {/* Tampon */}
-            <span className="stamp" style={{
+            {/* Badge statut */}
+            <span style={{
               position: "absolute",
               top: 12,
               right: 12,
-              transform: "rotate(6deg)",
-              color: accentDeep,
-              borderColor: accentDeep,
+              fontFamily: "var(--font-nunito, 'Nunito Sans', sans-serif)",
+              fontSize: "0.6875rem",
+              fontWeight: 700,
+              textTransform: "uppercase",
+              letterSpacing: "0.1em",
+              padding: "4px 10px",
+              borderRadius: 999,
+              background: complet ? "var(--ink)" : "var(--brick)",
+              color: "var(--white)",
             }}>
-              {complet ? "complet" : spectacle.saison}
+              {complet ? "Complet" : spectacle.saison}
             </span>
           </div>
 
           {/* Corps */}
-          <div style={{ padding: compact ? "14px 16px 16px" : "16px 18px 20px" }}>
-            <span className="kicker" style={{ marginBottom: 6, color: accentDeep }}>
+          <div style={{
+            padding: compact ? "16px 18px 20px" : "20px 22px 24px",
+            flex: 1,
+            display: "flex",
+            flexDirection: "column",
+          }}>
+            <span className="chip-acap" style={{ alignSelf: "flex-start", marginBottom: 10 }}>
               {spectacle.genres[0] ?? "Théâtre"}
             </span>
-            <h3 className="show-name" style={{
-              fontFamily: "var(--font-fraunces, Fraunces, serif)",
-              fontStyle: "italic",
-              fontWeight: 500,
+            <h3 style={{
+              fontFamily: "var(--font-abril, 'Abril Fatface', serif)",
+              fontWeight: 400,
               fontSize: compact ? "1.25rem" : "1.5rem",
               lineHeight: 1.1,
               color: "var(--ink)",
-              margin: "4px 0 6px",
+              margin: "0 0 8px",
             }}>
               {spectacle.titre}
             </h3>
             <p style={{
-              fontFamily: "var(--font-worksans, Work Sans, system-ui, sans-serif)",
+              fontFamily: "var(--font-nunito, 'Nunito Sans', sans-serif)",
               fontSize: "0.8125rem",
+              fontWeight: 600,
               color: "var(--ink-soft)",
-              margin: "0 0 2px",
+              margin: "0 0 4px",
               display: "flex",
               alignItems: "center",
               gap: 6,
@@ -116,11 +113,11 @@ export default function SpectacleCard({ spectacle, compact }: SpectacleCardProps
               {nbDatesSupp > 0 && (
                 <span style={{
                   display: "inline-block",
-                  fontFamily: "var(--font-worksans, Work Sans, system-ui, sans-serif)",
+                  fontFamily: "var(--font-nunito, 'Nunito Sans', sans-serif)",
                   fontSize: "0.6875rem",
                   fontWeight: 700,
-                  background: accentDeep,
-                  color: "#fff",
+                  background: "var(--brick)",
+                  color: "var(--white)",
                   padding: "1px 7px",
                   borderRadius: 999,
                   letterSpacing: "0.02em",
@@ -130,7 +127,7 @@ export default function SpectacleCard({ spectacle, compact }: SpectacleCardProps
               )}
             </p>
             <p style={{
-              fontFamily: "var(--font-worksans, Work Sans, system-ui, sans-serif)",
+              fontFamily: "var(--font-nunito, 'Nunito Sans', sans-serif)",
               fontSize: "0.75rem",
               color: "var(--ink-muted)",
               margin: 0,

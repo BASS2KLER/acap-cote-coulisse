@@ -46,13 +46,13 @@ export function SectionTitre({ titre, sous, centré, kicker, accentColor }: Sect
         <span className="kicker" style={{
           marginBottom: 8,
           display: "block",
-          color: accentColor ?? "var(--rose-deep)",
+          color: accentColor ?? "var(--brick)",
         }}>
           {kicker}
         </span>
       )}
       <h2 style={{
-        fontFamily: "var(--font-fraunces, Fraunces, serif)",
+        fontFamily: "var(--font-abril, 'Abril Fatface', serif)",
         fontWeight: 500,
         fontSize: "clamp(1.75rem, 3.5vw, 2.5rem)",
         lineHeight: 1.08,
@@ -64,7 +64,7 @@ export function SectionTitre({ titre, sous, centré, kicker, accentColor }: Sect
       </h2>
       {sous && (
         <p style={{
-          fontFamily: "var(--font-worksans, Work Sans, system-ui, sans-serif)",
+          fontFamily: "var(--font-nunito, 'Nunito Sans', sans-serif)",
           fontSize: "1.0625rem",
           lineHeight: 1.6,
           color: "var(--ink-soft)",

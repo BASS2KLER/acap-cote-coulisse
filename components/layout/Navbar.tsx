@@ -5,16 +5,39 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
-import Image from "next/image";
 
 const LIENS = [
-  { href: "/acap",       label: "L'ACAP" },
+  { href: "/acap",       label: "L'association" },
   { href: "/ateliers",   label: "Ateliers" },
   { href: "/spectacles", label: "Spectacles" },
   { href: "/galerie",    label: "Galerie" },
   { href: "/pratique",   label: "Infos pratiques" },
   { href: "/contact",    label: "Contact" },
 ];
+
+function MasquesLogo() {
+  return (
+    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"
+      style={{ width: 44, height: 44 }}>
+      {/* Masque Comique */}
+      <path d="M10 20 C10 5,50 5,50 20 C50 50,30 75,30 75 C30 75,10 50,10 20 Z"
+        stroke="var(--brick)" strokeWidth="4" fill="white"/>
+      <circle cx="24" cy="26" r="4" fill="var(--brick)"/>
+      <circle cx="36" cy="26" r="4" fill="var(--brick)"/>
+      <path d="M22 44 C22 54,38 54,38 44"
+        stroke="var(--brick)" strokeWidth="4" strokeLinecap="round" fill="none"/>
+      {/* Masque Tragique */}
+      <path d="M55 35 C55 20,95 20,95 35 C95 65,75 90,75 90 C75 90,55 65,55 35 Z"
+        stroke="var(--brick)" strokeWidth="4" fill="white"/>
+      <path d="M65 44 C65 41,73 41,73 44"
+        stroke="var(--brick)" strokeWidth="4" strokeLinecap="round" fill="none"/>
+      <path d="M77 44 C77 41,85 41,85 44"
+        stroke="var(--brick)" strokeWidth="4" strokeLinecap="round" fill="none"/>
+      <path d="M67 67 C67 61,83 61,83 67"
+        stroke="var(--brick)" strokeWidth="4" strokeLinecap="round" fill="none"/>
+    </svg>
+  );
+}
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -24,9 +47,10 @@ export default function Navbar() {
     <header
       className="sticky top-0 z-50"
       style={{
-        background: "rgba(245,239,227,0.92)",
-        backdropFilter: "blur(10px)",
+        background: "rgba(255,255,255,0.96)",
+        backdropFilter: "blur(12px)",
         borderBottom: "1px solid var(--ink-line)",
+        boxShadow: "0 2px 16px rgba(0,0,0,0.04)",
       }}
     >
       <div style={{ maxWidth: 1280, margin: "0 auto", padding: "0 48px" }}>
@@ -37,20 +61,12 @@ export default function Navbar() {
             href="/"
             style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none", flexShrink: 0 }}
           >
-            <div style={{ width: 52, height: 52, flexShrink: 0 }}>
-              <Image
-                src="/logo-acap-v2.png"
-                alt=""
-                width={52}
-                height={52}
-                style={{ objectFit: "contain", width: "100%", height: "100%" }}
-              />
-            </div>
+            <MasquesLogo />
             <div>
               <div style={{
-                fontFamily: "var(--font-fraunces, Fraunces, serif)",
-                fontWeight: 600,
-                fontSize: "0.9375rem",
+                fontFamily: "var(--font-abril, 'Abril Fatface', serif)",
+                fontWeight: 400,
+                fontSize: "1.125rem",
                 color: "var(--ink)",
                 lineHeight: 1.1,
                 letterSpacing: "-0.01em",
@@ -58,10 +74,12 @@ export default function Navbar() {
                 L'ACAP
               </div>
               <div style={{
-                fontFamily: "var(--font-fraunces, Fraunces, serif)",
-                fontStyle: "italic",
-                fontSize: "0.6875rem",
+                fontFamily: "var(--font-nunito, 'Nunito Sans', sans-serif)",
+                fontSize: "0.625rem",
+                fontWeight: 600,
                 color: "var(--ink-muted)",
+                textTransform: "uppercase",
+                letterSpacing: "0.1em",
                 lineHeight: 1.2,
               }}>
                 théâtre à Saint-Prix
@@ -70,7 +88,10 @@ export default function Navbar() {
           </Link>
 
           {/* Navigation desktop */}
-          <nav className="hidden md:flex" style={{ display: "flex", gap: 24, flex: 1, marginLeft: 8 }} aria-label="Navigation principale">
+          <nav
+            style={{ display: "flex", gap: 28, flex: 1, marginLeft: 8 }}
+            aria-label="Navigation principale"
+          >
             {LIENS.map((lien) => {
               const actif = pathname === lien.href || (lien.href !== "/" && pathname.startsWith(lien.href));
               return (
@@ -78,30 +99,30 @@ export default function Navbar() {
                   key={lien.href}
                   href={lien.href}
                   style={{
-                    fontFamily: "var(--font-worksans, Work Sans, system-ui, sans-serif)",
+                    fontFamily: "var(--font-nunito, 'Nunito Sans', sans-serif)",
                     fontSize: "0.875rem",
-                    fontWeight: 500,
-                    color: actif ? "var(--ink)" : "var(--ink-soft)",
+                    fontWeight: 600,
+                    color: actif ? "var(--brick)" : "var(--ink-soft)",
                     textDecoration: "none",
                     padding: "6px 0",
                     position: "relative",
                     transition: "color 140ms",
+                    whiteSpace: "nowrap",
                   }}
+                  className="hidden md:block"
                 >
                   {lien.label}
                   {actif && (
                     <motion.span
-                      layoutId="nav-underline"
+                      layoutId="nav-underline-v3"
                       style={{
                         position: "absolute",
-                        left: -2,
-                        right: -2,
+                        left: 0,
+                        right: 0,
                         bottom: 0,
-                        height: 5,
-                        background: "var(--rose)",
-                        borderRadius: 2,
-                        opacity: 0.7,
-                        zIndex: -1,
+                        height: 2,
+                        background: "var(--brick)",
+                        borderRadius: 1,
                       }}
                     />
                   )}
@@ -119,7 +140,7 @@ export default function Navbar() {
               className="md:hidden"
               style={{
                 padding: "8px",
-                borderRadius: 4,
+                borderRadius: 8,
                 border: "1px solid var(--ink-line)",
                 background: "transparent",
                 color: "var(--ink)",
@@ -145,7 +166,7 @@ export default function Navbar() {
             transition={{ duration: 0.18 }}
             style={{
               borderTop: "1px solid var(--ink-line)",
-              background: "var(--paper)",
+              background: "var(--white)",
               padding: "16px 48px 24px",
             }}
           >
@@ -157,10 +178,10 @@ export default function Navbar() {
                     key={lien.href}
                     href={lien.href}
                     style={{
-                      fontFamily: "var(--font-worksans, Work Sans, system-ui, sans-serif)",
+                      fontFamily: "var(--font-nunito, 'Nunito Sans', sans-serif)",
                       fontSize: "1rem",
-                      fontWeight: actif ? 600 : 400,
-                      color: actif ? "var(--ink)" : "var(--ink-soft)",
+                      fontWeight: actif ? 700 : 400,
+                      color: actif ? "var(--brick)" : "var(--ink-soft)",
                       textDecoration: "none",
                       padding: "10px 0",
                       borderBottom: "1px solid var(--ink-line)",

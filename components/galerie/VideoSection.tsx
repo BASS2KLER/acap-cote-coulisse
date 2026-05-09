@@ -154,10 +154,10 @@ const VIDEOS_ARCHIVES: ArchiveVideo[] = [
 ];
 
 const ACCENT_WASHES = [
-  "var(--rose-wash)",
-  "var(--moutarde-wash)",
-  "var(--mousse-wash)",
-  "var(--lavande-wash)",
+  "var(--brick-wash)",
+  "var(--cream-deep)",
+  "var(--cream)",
+  "var(--cream-deep)",
 ];
 
 interface ModalState {
@@ -180,13 +180,13 @@ export default function VideoSection() {
     <>
       {/* En-tête de section */}
       <div style={{ marginBottom: 32 }}>
-        <span className="kicker" style={{ marginBottom: 8, display: "block", color: "var(--lavande-deep)" }}>
+        <span className="kicker" style={{ marginBottom: 8, display: "block", color: "var(--sand-deep)" }}>
           ▶ Vidéos
         </span>
-        <h2 style={{ fontFamily: "var(--font-fraunces, Fraunces, serif)", fontWeight: 500, fontSize: "1.875rem", lineHeight: 1.1, letterSpacing: "-0.02em", color: "var(--ink)", margin: 0 }}>
+        <h2 style={{ fontFamily: "var(--font-abril, 'Abril Fatface', serif)", fontWeight: 500, fontSize: "1.875rem", lineHeight: 1.1, letterSpacing: "-0.02em", color: "var(--ink)", margin: 0 }}>
           Nos spectacles en vidéo
         </h2>
-        <p style={{ fontFamily: "var(--font-worksans)", fontSize: "0.9375rem", color: "var(--ink-muted)", marginTop: 8, marginBottom: 0 }}>
+        <p style={{ fontFamily: "var(--font-nunito, 'Nunito Sans', sans-serif)", fontSize: "0.9375rem", color: "var(--ink-muted)", marginTop: 8, marginBottom: 0 }}>
           Archives YouTube de la compagnie — cliquez sur un spectacle pour le visionner.
         </p>
       </div>
@@ -201,7 +201,7 @@ export default function VideoSection() {
               all: "unset",
               display: "block",
               cursor: "pointer",
-              background: "#FBF7EC",
+              background: "var(--white)",
               border: "1px solid var(--ink-line)",
               borderRadius: 6,
               overflow: "hidden",
@@ -260,7 +260,7 @@ export default function VideoSection() {
                   right: 8,
                   background: "rgba(42,39,34,0.75)",
                   color: "#F5EFE3",
-                  fontFamily: "var(--font-worksans)",
+                  fontFamily: "var(--font-nunito, 'Nunito Sans', sans-serif)",
                   fontSize: "0.6875rem",
                   fontWeight: 600,
                   padding: "2px 8px",
@@ -276,10 +276,10 @@ export default function VideoSection() {
               <span className="kicker" style={{ fontSize: "0.625rem", color: "var(--ink-muted)", display: "block", marginBottom: 4 }}>
                 {spec.saison}
               </span>
-              <p style={{ fontFamily: "var(--font-fraunces, Fraunces, serif)", fontStyle: "italic", fontWeight: 500, fontSize: "1rem", color: "var(--ink)", margin: "0 0 4px", lineHeight: 1.2 }}>
+              <p style={{ fontFamily: "var(--font-abril, 'Abril Fatface', serif)", fontStyle: "italic", fontWeight: 500, fontSize: "1rem", color: "var(--ink)", margin: "0 0 4px", lineHeight: 1.2 }}>
                 {spec.titre}
               </p>
-              <p style={{ fontFamily: "var(--font-worksans)", fontSize: "0.75rem", color: "var(--ink-muted)", margin: 0, lineHeight: 1.4 }}>
+              <p style={{ fontFamily: "var(--font-nunito, 'Nunito Sans', sans-serif)", fontSize: "0.75rem", color: "var(--ink-muted)", margin: 0, lineHeight: 1.4 }}>
                 {spec.description}
               </p>
             </div>
@@ -313,7 +313,7 @@ export default function VideoSection() {
               transition={{ type: "spring", stiffness: 320, damping: 26 }}
               onClick={(e) => e.stopPropagation()}
               style={{
-                background: "#FBF7EC",
+                background: "var(--white)",
                 border: "1px solid var(--ink-line)",
                 borderRadius: 8,
                 width: "100%",
@@ -334,7 +334,7 @@ export default function VideoSection() {
                   <span className="kicker" style={{ fontSize: "0.625rem", color: "var(--ink-muted)", display: "block" }}>
                     {modal.spec.saison}
                   </span>
-                  <h3 style={{ fontFamily: "var(--font-fraunces, Fraunces, serif)", fontStyle: "italic", fontWeight: 500, fontSize: "1.125rem", color: "var(--ink)", margin: 0 }}>
+                  <h3 style={{ fontFamily: "var(--font-abril, 'Abril Fatface', serif)", fontStyle: "italic", fontWeight: 500, fontSize: "1.125rem", color: "var(--ink)", margin: 0 }}>
                     {modal.spec.titre}
                   </h3>
                 </div>
@@ -383,7 +383,7 @@ export default function VideoSection() {
                       key={v.id}
                       onClick={() => setModal({ ...modal, videoId: v.id })}
                       style={{
-                        fontFamily: "var(--font-worksans)",
+                        fontFamily: "var(--font-nunito, 'Nunito Sans', sans-serif)",
                         fontSize: "0.75rem",
                         fontWeight: v.id === modal.videoId ? 700 : 400,
                         padding: "4px 12px",

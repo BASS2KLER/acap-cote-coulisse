@@ -10,7 +10,7 @@ export default function MentionsLegalesPage() {
     <Section>
       <h1
         className="font-display font-black text-3xl text-encre mb-8"
-        style={{ fontFamily: "var(--font-fraunces, Fraunces, serif)" }}
+        style={{ fontFamily: "var(--font-abril, 'Abril Fatface', serif)" }}
       >
         Mentions légales
       </h1>
@@ -19,7 +19,7 @@ export default function MentionsLegalesPage() {
         <div>
           <h2
             className="font-display font-bold text-xl mb-2"
-            style={{ fontFamily: "var(--font-fraunces, Fraunces, serif)" }}
+            style={{ fontFamily: "var(--font-abril, 'Abril Fatface', serif)" }}
           >
             Éditeur du site
           </h2>
@@ -33,7 +33,7 @@ export default function MentionsLegalesPage() {
         <div>
           <h2
             className="font-display font-bold text-xl mb-2"
-            style={{ fontFamily: "var(--font-fraunces, Fraunces, serif)" }}
+            style={{ fontFamily: "var(--font-abril, 'Abril Fatface', serif)" }}
           >
             Hébergement
           </h2>
@@ -46,7 +46,7 @@ export default function MentionsLegalesPage() {
         <div>
           <h2
             className="font-display font-bold text-xl mb-2"
-            style={{ fontFamily: "var(--font-fraunces, Fraunces, serif)" }}
+            style={{ fontFamily: "var(--font-abril, 'Abril Fatface', serif)" }}
           >
             Propriété intellectuelle
           </h2>
@@ -59,7 +59,7 @@ export default function MentionsLegalesPage() {
         <div>
           <h2
             className="font-display font-bold text-xl mb-2"
-            style={{ fontFamily: "var(--font-fraunces, Fraunces, serif)" }}
+            style={{ fontFamily: "var(--font-abril, 'Abril Fatface', serif)" }}
           >
             Données personnelles
           </h2>

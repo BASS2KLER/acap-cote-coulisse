@@ -1,28 +1,20 @@
 import type { Metadata } from "next";
-import { Fraunces, Work_Sans, Bricolage_Grotesque } from "next/font/google";
+import { Abril_Fatface, Nunito_Sans } from "next/font/google";
 import "./globals.css";
 import ConvexClientProvider from "@/components/ConvexClientProvider";
 
-const fraunces = Fraunces({
+const abrilFatface = Abril_Fatface({
   subsets: ["latin"],
-  variable: "--font-fraunces",
-  weight: ["400", "500", "600", "700"],
-  style: ["normal", "italic"],
+  variable: "--font-abril",
+  weight: ["400"],
   display: "swap",
 });
 
-const workSans = Work_Sans({
+const nunitoSans = Nunito_Sans({
   subsets: ["latin"],
-  variable: "--font-worksans",
-  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-nunito",
+  weight: ["300", "400", "600", "700", "800"],
   style: ["normal", "italic"],
-  display: "swap",
-});
-
-const bricolage = Bricolage_Grotesque({
-  subsets: ["latin"],
-  variable: "--font-bricolage",
-  weight: ["300", "400", "500", "600", "700"],
   display: "swap",
 });
 
@@ -46,7 +38,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="fr" className={`${fraunces.variable} ${workSans.variable} ${bricolage.variable}`}>
+    <html lang="fr" className={`${abrilFatface.variable} ${nunitoSans.variable}`}>
       <body className="antialiased">
         <ConvexClientProvider>
           {children}
