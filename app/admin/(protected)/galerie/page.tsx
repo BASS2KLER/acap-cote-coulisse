@@ -4,7 +4,8 @@ import { useState, useRef } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
-import { Trash2, Plus, Image, Film, Upload, ExternalLink } from "lucide-react";
+import { Trash2, Plus, Image, Film, Upload, ExternalLink, Lock } from "lucide-react";
+import { VIDEOS_ARCHIVES } from "@/lib/videos-archives";
 
 const CATEGORIES = ["Auditions", "Répétitions", "Vie de la troupe", "Divers"] as const;
 type Categorie = typeof CATEGORIES[number];
@@ -240,6 +241,54 @@ export default function AdminGaleriePage() {
           )}
         </div>
       )}
+
+      {/* Archives vidéo (données statiques dans le code) */}
+      <div className="mt-12 border-t-2 border-encre pt-8">
+        <div className="flex items-center gap-3 mb-2">
+          <h2 className="font-bold text-xl text-encre"
+            style={{ fontFamily: "var(--font-fraunces, Fraunces, serif)" }}>
+            📼 Archives vidéo (2009–2011)
+          </h2>
+          <span className="flex items-center gap-1 text-xs font-bold text-encre-douce bg-creme-deep px-2 py-0.5 rounded-full">
+            <Lock size={10} /> {VIDEOS_ARCHIVES.length} spectacles · lecture seule
+          </span>
+        </div>
+        <p className="text-xs text-encre-douce mb-6">
+          Ces vidéos sont intégrées directement dans le code du site. Pour en ajouter ou retirer, contacter le développeur.
+        </p>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+          {VIDEOS_ARCHIVES.map((archive) => (
+            <a
+              key={archive.id}
+              href={`https://www.youtube.com/watch?v=${archive.thumbnail}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block bg-creme-pale border-2 border-encre rounded-xl overflow-hidden shadow-card hover:border-encre transition-colors"
+            >
+              <div className="aspect-square relative bg-encre">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={`https://img.youtube.com/vi/${archive.thumbnail}/mqdefault.jpg`}
+                  alt={archive.titre}
+                  className="absolute inset-0 w-full h-full object-cover opacity-80"
+                />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <Film size={28} className="text-white drop-shadow" />
+                </div>
+                {archive.videos.length > 1 && (
+                  <span className="absolute bottom-2 right-2 text-xs font-bold bg-black/60 text-white px-2 py-0.5 rounded-full">
+                    {archive.videos.length} vidéos
+                  </span>
+                )}
+              </div>
+              <div className="p-3">
+                <div className="font-bold text-sm text-encre truncate">{archive.titre}</div>
+                <div className="text-xs text-encre-douce">{archive.saison}</div>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
 
       {/* Vidéos des spectacles (lecture seule) */}
       {spectaclesVideos.length > 0 && (
