@@ -33,13 +33,13 @@ export default function SpectacleCard({ spectacle, compact }: SpectacleCardProps
         }}>
           {/* Zone image */}
           <div style={{
-            aspectRatio: "4/3",
+            height: 200,
             background: "var(--brick-wash)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             position: "relative",
-            padding: 16,
+            padding: 12,
             overflow: "hidden",
           }}>
             {spectacle.image ? (
