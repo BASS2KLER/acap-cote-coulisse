@@ -76,4 +76,18 @@ export default defineSchema({
     ),
     ordre: v.optional(v.number()),
   }).index("by_categorie", ["categorie"]),
+
+  reservations: defineTable({
+    spectacleId: v.id("spectacles"),
+    representationIndex: v.number(),
+    nom: v.string(),
+    email: v.string(),
+    telephone: v.optional(v.string()),
+    nbPlaces: v.number(),
+    statut: v.union(v.literal("en_attente"), v.literal("confirme"), v.literal("annule")),
+    notes: v.optional(v.string()),
+  })
+    .index("by_spectacleId", ["spectacleId"])
+    .index("by_spectacleId_and_representationIndex", ["spectacleId", "representationIndex"])
+    .index("by_statut", ["statut"]),
 });
