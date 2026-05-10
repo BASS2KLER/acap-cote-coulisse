@@ -66,6 +66,7 @@ export default defineSchema({
     type: v.union(v.literal("photo"), v.literal("video")),
     storageId: v.optional(v.id("_storage")),
     urlVideo: v.optional(v.string()),
+    videosExtras: v.optional(v.array(v.object({ label: v.string(), id: v.string() }))),
     date: v.string(),
     categorie: v.union(
       v.literal("Auditions"),

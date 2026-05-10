@@ -1,5 +1,6 @@
-import { query, mutation } from "./_generated/server";
+import { query, mutation, internalMutation } from "./_generated/server";
 import { v } from "convex/values";
+import { VIDEOS_ARCHIVES } from "../lib/videos-archives";
 
 const categorieValidator = v.union(
   v.literal("Auditions"),
@@ -37,12 +38,36 @@ export const create = mutation({
     type: v.union(v.literal("photo"), v.literal("video")),
     storageId: v.optional(v.id("_storage")),
     urlVideo: v.optional(v.string()),
+    videosExtras: v.optional(v.array(v.object({ label: v.string(), id: v.string() }))),
     date: v.string(),
     categorie: categorieValidator,
     ordre: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
     return await ctx.db.insert("galerie", args);
+  },
+});
+
+export const seedArchives = internalMutation({
+  args: {},
+  handler: async (ctx) => {
+    const existing = await ctx.db.query("galerie").collect();
+    const existingTitres = new Set(existing.map((i) => i.titre));
+    let inserted = 0;
+    for (const archive of VIDEOS_ARCHIVES) {
+      if (existingTitres.has(archive.titre)) continue;
+      await ctx.db.insert("galerie", {
+        titre: archive.titre,
+        description: archive.description,
+        type: "video",
+        urlVideo: `https://www.youtube.com/watch?v=${archive.thumbnail}`,
+        videosExtras: archive.videos,
+        date: archive.saison,
+        categorie: "Divers",
+      });
+      inserted++;
+    }
+    return { inserted };
   },
 });
 
