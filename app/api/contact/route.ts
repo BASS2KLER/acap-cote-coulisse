@@ -41,11 +41,13 @@ export async function POST(req: NextRequest) {
   }
 
   const sujet = data.sujet ?? "Message de contact";
+  const replyTo = data.email ? `"${data.prenom ?? data.nom_complet ?? ""}" <${data.email}>` : undefined;
 
   try {
     await transporter.sendMail({
-      from: `"Site ACAP" <${process.env.GMAIL_USER}>`,
+      from: `"Formulaire ACAP" <${process.env.GMAIL_USER}>`,
       to: DESTINATAIRES,
+      replyTo,
       subject: `[ACAP] ${sujet}`,
       html: buildHtml(data),
     });
