@@ -47,14 +47,15 @@ export default function SpectacleCard({ spectacle, compact }: SpectacleCardProps
         >
           {/* Zone image */}
           <div style={{
-            aspectRatio: "4/3",
+            height: 200,
             background: accentWash,
             borderBottom: "1px solid var(--ink-line)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             position: "relative",
-            padding: 16,
+            padding: 12,
+            overflow: "hidden",
           }}>
             {spectacle.image ? (
               // eslint-disable-next-line @next/next/no-img-element
