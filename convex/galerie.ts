@@ -1,6 +1,5 @@
-import { query, mutation, internalMutation } from "./_generated/server";
+import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
-import { VIDEOS_ARCHIVES } from "../lib/videos-archives";
 
 const categorieValidator = v.union(
   v.literal("Auditions"),
@@ -48,28 +47,6 @@ export const create = mutation({
   },
 });
 
-export const seedArchives = internalMutation({
-  args: {},
-  handler: async (ctx) => {
-    const existing = await ctx.db.query("galerie").collect();
-    const existingTitres = new Set(existing.map((i) => i.titre));
-    let inserted = 0;
-    for (const archive of VIDEOS_ARCHIVES) {
-      if (existingTitres.has(archive.titre)) continue;
-      await ctx.db.insert("galerie", {
-        titre: archive.titre,
-        description: archive.description,
-        type: "video",
-        urlVideo: `https://www.youtube.com/watch?v=${archive.thumbnail}`,
-        videosExtras: archive.videos,
-        date: archive.saison,
-        categorie: "Divers",
-      });
-      inserted++;
-    }
-    return { inserted };
-  },
-});
 
 export const remove = mutation({
   args: { id: v.id("galerie") },
