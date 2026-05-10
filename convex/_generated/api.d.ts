@@ -9,6 +9,7 @@
  */
 
 import type * as actualites from "../actualites.js";
+import type * as galerie from "../galerie.js";
 import type * as membres from "../membres.js";
 import type * as seed from "../seed.js";
 import type * as spectacles from "../spectacles.js";
@@ -21,6 +22,7 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   actualites: typeof actualites;
+  galerie: typeof galerie;
   membres: typeof membres;
   seed: typeof seed;
   spectacles: typeof spectacles;
