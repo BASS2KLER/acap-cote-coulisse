@@ -4,7 +4,7 @@ import { useState, useRef } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
-import { Trash2, Plus, Image, Film, Upload } from "lucide-react";
+import { Trash2, Plus, Image, Film, Upload, ExternalLink } from "lucide-react";
 
 const CATEGORIES = ["Auditions", "Répétitions", "Vie de la troupe", "Divers"] as const;
 type Categorie = typeof CATEGORIES[number];
@@ -19,9 +19,12 @@ function getYoutubeId(url: string): string | null {
 
 export default function AdminGaleriePage() {
   const items = useQuery(api.galerie.list);
+  const spectacles = useQuery(api.spectacles.list);
   const createItem = useMutation(api.galerie.create);
   const removeItem = useMutation(api.galerie.remove);
   const generateUploadUrl = useMutation(api.galerie.generateUploadUrl);
+
+  const spectaclesVideos = (spectacles ?? []).filter((s) => s.lienVideo);
 
   const [showForm, setShowForm] = useState(false);
   const [type, setType] = useState<"photo" | "video">("photo");
@@ -235,6 +238,55 @@ export default function AdminGaleriePage() {
               Aucun élément pour l'instant — cliquez sur "Ajouter" pour commencer.
             </div>
           )}
+        </div>
+      )}
+
+      {/* Vidéos des spectacles (lecture seule) */}
+      {spectaclesVideos.length > 0 && (
+        <div className="mt-12 border-t-2 border-encre pt-8">
+          <h2 className="font-bold text-xl text-encre mb-2"
+            style={{ fontFamily: "var(--font-fraunces, Fraunces, serif)" }}>
+            🎬 Vidéos des spectacles
+          </h2>
+          <p className="text-xs text-encre-douce mb-6">
+            Gérées depuis chaque fiche spectacle — lecture seule ici.
+          </p>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+            {spectaclesVideos.map((s) => {
+              const ytId = s.lienVideo ? getYoutubeId(s.lienVideo) : null;
+              return (
+                <div key={s._id} className="relative bg-creme-pale border-2 border-encre rounded-xl overflow-hidden shadow-card">
+                  <div className="aspect-square bg-encre relative">
+                    {ytId ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={`https://img.youtube.com/vi/${ytId}/mqdefault.jpg`}
+                        alt={s.titre}
+                        className="absolute inset-0 w-full h-full object-cover opacity-80"
+                      />
+                    ) : (
+                      <Film size={32} className="text-creme-pale absolute inset-0 m-auto" />
+                    )}
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <Film size={28} className="text-white drop-shadow" />
+                    </div>
+                  </div>
+                  <div className="p-3 flex items-start justify-between gap-2">
+                    <div>
+                      <div className="font-bold text-sm text-encre truncate">{s.titre}</div>
+                      <div className="text-xs text-encre-douce">{s.saison}</div>
+                    </div>
+                    {s.lienVideo && (
+                      <a href={s.lienVideo} target="_blank" rel="noopener noreferrer"
+                        className="shrink-0 p-1.5 rounded-lg border border-encre-douce text-encre-douce hover:border-encre hover:text-encre transition-colors">
+                        <ExternalLink size={13} />
+                      </a>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       )}
 
