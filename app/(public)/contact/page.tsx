@@ -25,13 +25,11 @@ const labelStyle: React.CSSProperties = {
   color: "var(--ink)",
 };
 
-const FORM_NAMES: Record<Tab, string> = {
+const FORM_SUJETS: Record<Tab, string> = {
   essai: "Séance d'essai",
-  inscription: "Inscription",
+  inscription: "Demande d'inscription",
   contact: "Question",
 };
-
-const WEB3FORMS_KEY = process.env.NEXT_PUBLIC_WEB3FORMS_KEY ?? "";
 
 export default function ContactPage() {
   const [tab, setTab] = useState<Tab>("essai");
@@ -45,17 +43,16 @@ export default function ContactPage() {
     setErreur(false);
 
     const formData = new FormData(e.currentTarget);
-    const data: Record<string, string> = { access_key: WEB3FORMS_KEY, subject: `[ACAP] ${FORM_NAMES[tab]}` };
+    const data: Record<string, string> = { sujet: FORM_SUJETS[tab] };
     formData.forEach((val, key) => { data[key] = val.toString(); });
 
     try {
-      const res = await fetch("https://api.web3forms.com/submit", {
+      const res = await fetch("/api/contact", {
         method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
-      const json = await res.json();
-      if (json.success) {
+      if (res.ok) {
         setEnvoyé(true);
       } else {
         setErreur(true);
