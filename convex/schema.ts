@@ -59,4 +59,20 @@ export default defineSchema({
     tone: v.string(),
     publie: v.boolean(),
   }),
+
+  galerie: defineTable({
+    titre: v.string(),
+    description: v.optional(v.string()),
+    type: v.union(v.literal("photo"), v.literal("video")),
+    storageId: v.optional(v.id("_storage")),
+    urlVideo: v.optional(v.string()),
+    date: v.string(),
+    categorie: v.union(
+      v.literal("Auditions"),
+      v.literal("Répétitions"),
+      v.literal("Vie de la troupe"),
+      v.literal("Divers")
+    ),
+    ordre: v.optional(v.number()),
+  }).index("by_categorie", ["categorie"]),
 });
