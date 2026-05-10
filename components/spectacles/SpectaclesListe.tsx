@@ -10,7 +10,7 @@ export default function SpectaclesListe() {
 
   if (raw === undefined) {
     return (
-      <div className="flex flex-col gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {[1, 2, 3, 4].map((i) => (
           <div key={i} className="h-40 rounded-xl bg-creme-deep animate-pulse border-2 border-filet" />
         ))}
@@ -28,9 +28,9 @@ export default function SpectaclesListe() {
   }));
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
       {spectacles.map((spectacle) => (
-        <SpectacleCard key={spectacle.id} spectacle={spectacle} />
+        <SpectacleCard key={spectacle.id} spectacle={spectacle} compact />
       ))}
     </div>
   );
