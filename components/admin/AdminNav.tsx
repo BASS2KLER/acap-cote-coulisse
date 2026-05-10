@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, Theater, Users, Newspaper, Images, LogOut } from "lucide-react";
+import { LayoutDashboard, Theater, Users, Newspaper, Images, Ticket, LogOut } from "lucide-react";
 
 const LIENS = [
   { href: "/admin", label: "Tableau de bord", icon: LayoutDashboard, exact: true },
   { href: "/admin/spectacles", label: "Spectacles", icon: Theater },
+  { href: "/admin/reservations", label: "Réservations", icon: Ticket },
   { href: "/admin/membres", label: "La troupe", icon: Users },
   { href: "/admin/actualites", label: "Actualités", icon: Newspaper },
   { href: "/admin/galerie", label: "Galerie", icon: Images },
