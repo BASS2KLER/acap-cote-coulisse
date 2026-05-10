@@ -17,11 +17,7 @@ type Tab = "essai" | "inscription" | "contact";
 
 const S: React.CSSProperties = { maxWidth: 1280, margin: "0 auto", padding: "0 48px" };
 
-const fieldStyle: React.CSSProperties = {
-  display: "flex",
-  flexDirection: "column",
-  gap: 6,
-};
+const fieldStyle: React.CSSProperties = { display: "flex", flexDirection: "column", gap: 6 };
 const labelStyle: React.CSSProperties = {
   fontFamily: "var(--font-nunito, 'Nunito Sans', sans-serif)",
   fontSize: "0.8125rem",
@@ -29,19 +25,49 @@ const labelStyle: React.CSSProperties = {
   color: "var(--ink)",
 };
 
+const FORM_NAMES: Record<Tab, string> = {
+  essai: "essai",
+  inscription: "inscription",
+  contact: "question",
+};
+
 export default function ContactPage() {
   const [tab, setTab] = useState<Tab>("essai");
   const [envoyé, setEnvoyé] = useState(false);
+  const [envoi, setEnvoi] = useState(false);
+  const [erreur, setErreur] = useState(false);
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setTimeout(() => setEnvoyé(true), 350);
+    setEnvoi(true);
+    setErreur(false);
+
+    const formData = new FormData(e.currentTarget);
+    const body = new URLSearchParams();
+    formData.forEach((val, key) => body.append(key, val.toString()));
+
+    try {
+      const res = await fetch("/__forms", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: body.toString(),
+      });
+      if (res.ok) {
+        setEnvoyé(true);
+      } else {
+        setErreur(true);
+      }
+    } catch {
+      setErreur(true);
+    } finally {
+      setEnvoi(false);
+    }
   }
 
-  const TABS: { id: Tab; label: string; accent: string }[] = [
-    { id: "essai",       label: "✨ Séance d'essai",  accent: "moutarde" },
-    { id: "inscription", label: "📝 Inscription",      accent: "mousse" },
-    { id: "contact",     label: "✉ Question",          accent: "lavande" },
+  const TABS: { id: Tab; label: string }[] = [
+    { id: "essai",       label: "✨ Séance d'essai" },
+    { id: "inscription", label: "📝 Inscription" },
+    { id: "contact",     label: "✉ Question" },
   ];
 
   return (
@@ -52,7 +78,7 @@ export default function ContactPage() {
           <span className="kicker" style={{ marginBottom: 12, display: "block", color: "var(--brick)" }}>
             ✉ Contact
           </span>
-          <h1 style={{ fontFamily: "var(--font-abril, 'Abril Fatface', serif)", fontWeight: 600, fontSize: "clamp(2.5rem, 5vw, 4rem)", lineHeight: 1, letterSpacing: "-0.025em", color: "var(--ink)", margin: "0 0 16px" }}>
+          <h1 style={{ fontFamily: "var(--font-abril, 'Abril Fatface', serif)", fontWeight: 400, fontSize: "clamp(2.5rem, 5vw, 4rem)", lineHeight: 1, letterSpacing: "-0.025em", color: "var(--ink)", margin: "0 0 16px" }}>
             Nous contacter
           </h1>
           <p style={{ fontFamily: "var(--font-nunito, 'Nunito Sans', sans-serif)", fontSize: "1.0625rem", lineHeight: 1.6, color: "var(--ink-soft)", margin: 0 }}>
@@ -62,21 +88,22 @@ export default function ContactPage() {
       </div>
 
       <div style={{ ...S, padding: "48px 48px 80px" }}>
+
         {/* Onglets */}
-        <div style={{ display: "flex", gap: 8, marginBottom: 40, borderBottom: "1px solid var(--ink-line)", paddingBottom: 0 }}>
+        <div style={{ display: "flex", gap: 8, marginBottom: 40, borderBottom: "1px solid var(--ink-line)" }}>
           {TABS.map((t) => (
             <button
               key={t.id}
-              onClick={() => { setTab(t.id); setEnvoyé(false); }}
+              onClick={() => { setTab(t.id); setEnvoyé(false); setErreur(false); }}
               style={{
                 fontFamily: "var(--font-nunito, 'Nunito Sans', sans-serif)",
                 fontSize: "0.875rem",
-                fontWeight: tab === t.id ? 600 : 400,
+                fontWeight: tab === t.id ? 700 : 400,
                 padding: "10px 18px",
                 border: "none",
-                borderBottom: tab === t.id ? `2px solid var(--${t.accent}-deep)` : "2px solid transparent",
+                borderBottom: tab === t.id ? "2px solid var(--brick)" : "2px solid transparent",
                 background: "transparent",
-                color: tab === t.id ? "var(--ink)" : "var(--ink-soft)",
+                color: tab === t.id ? "var(--brick)" : "var(--ink-soft)",
                 cursor: "pointer",
                 transition: "all 140ms",
                 marginBottom: -1,
@@ -92,9 +119,16 @@ export default function ContactPage() {
           {/* Formulaire */}
           <div>
             {!envoyé ? (
-              <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+              <form
+                name={FORM_NAMES[tab]}
+                data-netlify="true"
+                onSubmit={handleSubmit}
+                style={{ display: "flex", flexDirection: "column", gap: 18 }}
+              >
+                {/* Champ Netlify obligatoire */}
+                <input type="hidden" name="form-name" value={FORM_NAMES[tab]} />
 
-                {/* Bannière info par onglet */}
+                {/* Bannière info */}
                 {tab === "essai" && (
                   <div style={{ background: "var(--cream-deep)", border: "1px solid var(--brick)", borderRadius: 4, padding: "12px 16px", fontFamily: "var(--font-nunito, 'Nunito Sans', sans-serif)", fontSize: "0.9375rem", color: "var(--ink)" }}>
                     ✨ La première séance est <strong>entièrement gratuite</strong>. Choisissez un créneau et on confirme par retour.
@@ -106,16 +140,16 @@ export default function ContactPage() {
                   </div>
                 )}
 
-                {/* Champs communs */}
+                {/* Champs Prénom / Nom */}
                 {(tab === "essai" || tab === "inscription") && (
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
                     <label style={fieldStyle}>
                       <span style={labelStyle}>Prénom *</span>
-                      <input required className="admin-input" placeholder="Marie" />
+                      <input required name="prenom" className="admin-input" placeholder="Marie" />
                     </label>
                     <label style={fieldStyle}>
                       <span style={labelStyle}>Nom *</span>
-                      <input required className="admin-input" placeholder="Dupont" />
+                      <input required name="nom" className="admin-input" placeholder="Dupont" />
                     </label>
                   </div>
                 )}
@@ -123,37 +157,37 @@ export default function ContactPage() {
                 {tab === "inscription" && (
                   <label style={fieldStyle}>
                     <span style={labelStyle}>Date de naissance *</span>
-                    <input required type="date" className="admin-input" />
+                    <input required name="date_naissance" type="date" className="admin-input" />
                   </label>
                 )}
 
                 {(tab === "essai" || tab === "inscription") && (
                   <label style={fieldStyle}>
                     <span style={labelStyle}>Téléphone *</span>
-                    <input required type="tel" className="admin-input" placeholder="06 XX XX XX XX" />
+                    <input required name="telephone" type="tel" className="admin-input" placeholder="06 XX XX XX XX" />
                   </label>
                 )}
 
                 {tab === "inscription" && (
                   <label style={fieldStyle}>
                     <span style={labelStyle}>Adresse *</span>
-                    <input required className="admin-input" placeholder="12 rue de la Paix, 95390 Saint-Prix" />
+                    <input required name="adresse" className="admin-input" placeholder="12 rue de la Paix, 95390 Saint-Prix" />
                   </label>
                 )}
 
                 {(tab === "essai" || tab === "inscription") && (
                   <label style={fieldStyle}>
                     <span style={labelStyle}>E-mail *</span>
-                    <input required type="email" className="admin-input" placeholder="marie@exemple.fr" />
+                    <input required name="email" type="email" className="admin-input" placeholder="marie@exemple.fr" />
                   </label>
                 )}
 
                 {(tab === "essai" || tab === "inscription") && (
                   <label style={fieldStyle}>
                     <span style={labelStyle}>{tab === "essai" ? "Atelier souhaité *" : "Atelier choisi *"}</span>
-                    <select required className="admin-input">
+                    <select required name="atelier" className="admin-input">
                       <option value="">— Choisir un créneau —</option>
-                      {ATELIERS.map((a) => <option key={a}>{a}</option>)}
+                      {ATELIERS.map((a) => <option key={a} value={a}>{a}</option>)}
                     </select>
                   </label>
                 )}
@@ -161,7 +195,7 @@ export default function ContactPage() {
                 {(tab === "essai" || tab === "inscription") && (
                   <label style={fieldStyle}>
                     <span style={labelStyle}>Expérience théâtre ?</span>
-                    <select className="admin-input">
+                    <select name="experience" className="admin-input">
                       <option>Aucune, c'est ma première fois</option>
                       <option>J'ai déjà fait quelques cours</option>
                       <option>J'ai de l'expérience</option>
@@ -171,15 +205,18 @@ export default function ContactPage() {
 
                 {tab === "inscription" && (
                   <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                    {[
-                      "J'autorise l'ACAP à utiliser ma photo / image pour les communications de l'association.",
-                      "Je souhaite être ajouté·e au groupe WhatsApp de l'atelier.",
-                    ].map((text) => (
-                      <label key={text} style={{ display: "flex", alignItems: "flex-start", gap: 10, cursor: "pointer" }}>
-                        <input type="checkbox" style={{ marginTop: 3, width: 16, height: 16, accentColor: "var(--sand-deep)", flexShrink: 0 }} />
-                        <span style={{ fontFamily: "var(--font-nunito, 'Nunito Sans', sans-serif)", fontSize: "0.875rem", color: "var(--ink-soft)" }}>{text}</span>
-                      </label>
-                    ))}
+                    <label style={{ display: "flex", alignItems: "flex-start", gap: 10, cursor: "pointer" }}>
+                      <input type="checkbox" name="droit_image" value="oui" style={{ marginTop: 3, width: 16, height: 16, accentColor: "var(--brick)", flexShrink: 0 }} />
+                      <span style={{ fontFamily: "var(--font-nunito, 'Nunito Sans', sans-serif)", fontSize: "0.875rem", color: "var(--ink-soft)" }}>
+                        J'autorise l'ACAP à utiliser ma photo / image pour les communications de l'association.
+                      </span>
+                    </label>
+                    <label style={{ display: "flex", alignItems: "flex-start", gap: 10, cursor: "pointer" }}>
+                      <input type="checkbox" name="whatsapp" value="oui" style={{ marginTop: 3, width: 16, height: 16, accentColor: "var(--brick)", flexShrink: 0 }} />
+                      <span style={{ fontFamily: "var(--font-nunito, 'Nunito Sans', sans-serif)", fontSize: "0.875rem", color: "var(--ink-soft)" }}>
+                        Je souhaite être ajouté·e au groupe WhatsApp de l'atelier.
+                      </span>
+                    </label>
                   </div>
                 )}
 
@@ -188,16 +225,16 @@ export default function ContactPage() {
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
                       <label style={fieldStyle}>
                         <span style={labelStyle}>Prénom et nom *</span>
-                        <input required className="admin-input" placeholder="Marie Dupont" />
+                        <input required name="nom_complet" className="admin-input" placeholder="Marie Dupont" />
                       </label>
                       <label style={fieldStyle}>
                         <span style={labelStyle}>E-mail *</span>
-                        <input required type="email" className="admin-input" placeholder="marie@exemple.fr" />
+                        <input required name="email" type="email" className="admin-input" placeholder="marie@exemple.fr" />
                       </label>
                     </div>
                     <label style={fieldStyle}>
                       <span style={labelStyle}>Sujet *</span>
-                      <select required className="admin-input">
+                      <select required name="sujet" className="admin-input">
                         <option>Renseignements sur les ateliers</option>
                         <option>Réservation spectacle</option>
                         <option>Partenariat / presse</option>
@@ -206,27 +243,37 @@ export default function ContactPage() {
                     </label>
                     <label style={fieldStyle}>
                       <span style={labelStyle}>Message *</span>
-                      <textarea required rows={5} className="admin-input" style={{ resize: "none" }} placeholder="Bonjour, je voudrais…" />
+                      <textarea required name="message" rows={5} className="admin-input" style={{ resize: "none" }} placeholder="Bonjour, je voudrais…" />
                     </label>
                   </>
                 )}
 
-                <button type="submit" className="btn-acap" style={{ marginTop: 4 }}>
-                  {tab === "essai" && "Réserver ma séance d'essai →"}
-                  {tab === "inscription" && "Envoyer ma demande d'inscription →"}
-                  {tab === "contact" && "Envoyer le message →"}
+                {erreur && (
+                  <div style={{ background: "#fef2f2", border: "1px solid #fca5a5", borderRadius: 8, padding: "12px 16px", fontFamily: "var(--font-nunito, 'Nunito Sans', sans-serif)", fontSize: "0.875rem", color: "#dc2626" }}>
+                    Une erreur s'est produite. Veuillez réessayer ou nous contacter directement à <strong>lacap95@free.fr</strong>.
+                  </div>
+                )}
+
+                <button type="submit" className="btn-acap" style={{ marginTop: 4 }} disabled={envoi}>
+                  {envoi ? "Envoi en cours…" : (
+                    <>
+                      {tab === "essai" && "Réserver ma séance d'essai →"}
+                      {tab === "inscription" && "Envoyer ma demande d'inscription →"}
+                      {tab === "contact" && "Envoyer le message →"}
+                    </>
+                  )}
                 </button>
               </form>
             ) : (
               <div style={{ textAlign: "center", padding: "48px 0" }}>
                 <div style={{ fontSize: "3rem", marginBottom: 16 }}>🎭</div>
-                <h2 style={{ fontFamily: "var(--font-abril, 'Abril Fatface', serif)", fontStyle: "italic", fontWeight: 500, fontSize: "2rem", color: "var(--ink)", margin: "0 0 12px" }}>
+                <h2 style={{ fontFamily: "var(--font-abril, 'Abril Fatface', serif)", fontWeight: 400, fontSize: "2rem", color: "var(--ink)", margin: "0 0 12px" }}>
                   Message envoyé !
                 </h2>
                 <p style={{ fontFamily: "var(--font-nunito, 'Nunito Sans', sans-serif)", fontSize: "1rem", color: "var(--ink-soft)", margin: "0 0 24px" }}>
                   On revient vers vous très vite.
                 </p>
-                <button onClick={() => setEnvoyé(false)} className="btn-acap btn-acap--secondary">
+                <button onClick={() => { setEnvoyé(false); setErreur(false); }} className="btn-acap btn-acap--ghost">
                   Envoyer un autre message
                 </button>
               </div>
@@ -235,39 +282,39 @@ export default function ContactPage() {
 
           {/* Coordonnées */}
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-            <div style={{ background: "var(--white)", border: "1px solid var(--ink-line)", borderRadius: 6, padding: 24, boxShadow: "0 2px 0 rgba(42,39,34,0.04), 0 8px 18px -10px rgba(42,39,34,0.12)" }}>
-              <h2 style={{ fontFamily: "var(--font-abril, 'Abril Fatface', serif)", fontWeight: 600, fontSize: "1.125rem", color: "var(--ink)", margin: "0 0 20px" }}>
+            <div style={{ background: "var(--white)", border: "1px solid var(--sand)", borderRadius: 16, padding: 24, boxShadow: "0 4px 16px rgba(0,0,0,0.06)" }}>
+              <h2 style={{ fontFamily: "var(--font-abril, 'Abril Fatface', serif)", fontWeight: 400, fontSize: "1.125rem", color: "var(--ink)", margin: "0 0 20px" }}>
                 Nos coordonnées
               </h2>
               <div style={{ display: "flex", flexDirection: "column", gap: 14, fontFamily: "var(--font-nunito, 'Nunito Sans', sans-serif)", fontSize: "0.875rem" }}>
                 <div>
-                  <p style={{ fontWeight: 600, color: "var(--ink)", margin: "0 0 2px" }}>Le Jardin d'Hélène</p>
+                  <p style={{ fontWeight: 700, color: "var(--ink)", margin: "0 0 2px" }}>Le Jardin d'Hélène</p>
                   <p style={{ color: "var(--ink-soft)", margin: 0, lineHeight: 1.6 }}>6 rue Auguste Rey<br />95390 Saint-Prix</p>
                 </div>
                 <div>
-                  <p style={{ fontWeight: 600, color: "var(--ink)", margin: "0 0 2px" }}>Hélène Toutain</p>
+                  <p style={{ fontWeight: 700, color: "var(--ink)", margin: "0 0 2px" }}>Hélène Toutain</p>
                   <a href="tel:+33681670498" style={{ color: "var(--brick)" }}>06 81 67 04 98</a>
                 </div>
                 <div>
-                  <p style={{ fontWeight: 600, color: "var(--ink)", margin: "0 0 2px" }}>Florence Guillot</p>
+                  <p style={{ fontWeight: 700, color: "var(--ink)", margin: "0 0 2px" }}>Florence Guillot</p>
                   <a href="tel:+33633622042" style={{ color: "var(--brick)" }}>06 33 62 20 42</a>
                 </div>
                 <div>
-                  <p style={{ fontWeight: 600, color: "var(--ink)", margin: "0 0 2px" }}>E-mail</p>
+                  <p style={{ fontWeight: 700, color: "var(--ink)", margin: "0 0 2px" }}>E-mail</p>
                   <a href="mailto:lacap95@free.fr" style={{ color: "var(--brick)" }}>lacap95@free.fr</a>
                 </div>
               </div>
             </div>
 
-            <div style={{ background: "var(--cream-deep)", border: "1px solid var(--brick)", borderRadius: 6, padding: 20 }}>
-              <p style={{ fontFamily: "var(--font-nunito, 'Nunito Sans', sans-serif)", fontWeight: 600, fontSize: "0.9375rem", color: "var(--ink)", margin: "0 0 6px" }}>✨ 1re séance offerte</p>
+            <div style={{ background: "var(--brick-wash)", border: "1px solid var(--brick)", borderRadius: 16, padding: 20 }}>
+              <p style={{ fontFamily: "var(--font-nunito, 'Nunito Sans', sans-serif)", fontWeight: 700, fontSize: "0.9375rem", color: "var(--ink)", margin: "0 0 6px" }}>✨ 1re séance offerte</p>
               <p style={{ fontFamily: "var(--font-nunito, 'Nunito Sans', sans-serif)", fontSize: "0.8125rem", color: "var(--ink-soft)", margin: 0 }}>
                 Venez essayer sans engagement. On vous accueille avec plaisir.
               </p>
             </div>
 
-            <div style={{ background: "var(--cream-deep)", border: "1px solid var(--sand-deep)", borderRadius: 6, padding: 20 }}>
-              <p style={{ fontFamily: "var(--font-nunito, 'Nunito Sans', sans-serif)", fontWeight: 600, fontSize: "0.9375rem", color: "var(--ink)", margin: "0 0 6px" }}>📁 Attestation CE</p>
+            <div style={{ background: "var(--cream-deep)", border: "1px solid var(--sand-deep)", borderRadius: 16, padding: 20 }}>
+              <p style={{ fontFamily: "var(--font-nunito, 'Nunito Sans', sans-serif)", fontWeight: 700, fontSize: "0.9375rem", color: "var(--ink)", margin: "0 0 6px" }}>📁 Attestation CE</p>
               <p style={{ fontFamily: "var(--font-nunito, 'Nunito Sans', sans-serif)", fontSize: "0.8125rem", color: "var(--ink-soft)", margin: 0 }}>
                 Disponible sur demande pour financement par votre comité d'entreprise.
               </p>
