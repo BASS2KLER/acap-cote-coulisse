@@ -26,10 +26,12 @@ const labelStyle: React.CSSProperties = {
 };
 
 const FORM_NAMES: Record<Tab, string> = {
-  essai: "essai",
-  inscription: "inscription",
-  contact: "question",
+  essai: "Séance d'essai",
+  inscription: "Inscription",
+  contact: "Question",
 };
+
+const WEB3FORMS_KEY = process.env.NEXT_PUBLIC_WEB3FORMS_KEY ?? "";
 
 export default function ContactPage() {
   const [tab, setTab] = useState<Tab>("essai");
@@ -43,16 +45,17 @@ export default function ContactPage() {
     setErreur(false);
 
     const formData = new FormData(e.currentTarget);
-    const body = new URLSearchParams();
-    formData.forEach((val, key) => body.append(key, val.toString()));
+    const data: Record<string, string> = { access_key: WEB3FORMS_KEY, subject: `[ACAP] ${FORM_NAMES[tab]}` };
+    formData.forEach((val, key) => { data[key] = val.toString(); });
 
     try {
-      const res = await fetch("/__forms", {
+      const res = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: body.toString(),
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify(data),
       });
-      if (res.ok) {
+      const json = await res.json();
+      if (json.success) {
         setEnvoyé(true);
       } else {
         setErreur(true);
@@ -120,13 +123,9 @@ export default function ContactPage() {
           <div>
             {!envoyé ? (
               <form
-                name={FORM_NAMES[tab]}
-                data-netlify="true"
                 onSubmit={handleSubmit}
                 style={{ display: "flex", flexDirection: "column", gap: 18 }}
               >
-                {/* Champ Netlify obligatoire */}
-                <input type="hidden" name="form-name" value={FORM_NAMES[tab]} />
 
                 {/* Bannière info */}
                 {tab === "essai" && (
