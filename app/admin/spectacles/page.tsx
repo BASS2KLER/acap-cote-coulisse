@@ -46,7 +46,7 @@ export default function AdminSpectaclesPage() {
       )}
 
       <div className="flex flex-col gap-4">
-        {spectacles?.map((s: { _id: string; titre: string; auteur: string; date: string; heure: string; lieu: string; places: number; tone: string; emoji: string; imageUrl?: string | null }) => {
+        {spectacles?.map((s) => {
           const tone = getToneClasses(s.tone as ToneCouleur);
           return (
             <div key={s._id}
