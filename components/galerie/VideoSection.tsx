@@ -20,7 +20,7 @@ interface ModalState {
 export default function VideoSection() {
   const [modal, setModal] = useState<ModalState | null>(null);
 
-  function ouvrir(spec: ArchiveVideo) {
+  function ouvrir(spec: VideoArchive) {
     setModal({ spec, videoId: spec.videos[0].id });
   }
 
