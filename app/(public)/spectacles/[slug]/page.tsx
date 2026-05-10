@@ -9,6 +9,7 @@ import { api } from "@/convex/_generated/api";
 import { getToneVars, isComplet, getPlacesLabel, getPrimaryRepresentation } from "@/lib/utils";
 import type { ToneCouleur, GenreSpectacle, Representation } from "@/lib/types";
 import ModalReservation from "@/components/spectacles/ModalReservation";
+import ReservationForm from "@/components/spectacles/ReservationForm";
 
 export default function SpectacleDetailPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -147,6 +148,9 @@ export default function SpectacleDetailPage() {
           {spectacle.galerie.length === 0 && (
             <p style={{ fontFamily: "var(--font-worksans)", fontSize: "0.8125rem", color: "var(--ink-muted)", marginTop: 8, fontStyle: "italic" }}>Photos de répétitions à venir.</p>
           )}
+
+          {/* Formulaire de réservation en ligne */}
+          <ReservationForm spectacle={spectacle} />
         </div>
 
         {/* Panneau réservation */}
