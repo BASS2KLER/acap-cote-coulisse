@@ -84,6 +84,10 @@ export default function AdminDashboard() {
             className="btn-acap bg-soleil-400 text-soleil-ink text-base py-3 px-5 inline-flex">
             + Nouvelle actualité
           </Link>
+          <Link href="/admin/galerie"
+            className="btn-acap bg-encre-douce text-creme-pale text-base py-3 px-5 inline-flex">
+            📷 Galerie
+          </Link>
         </div>
       </div>
     </div>
