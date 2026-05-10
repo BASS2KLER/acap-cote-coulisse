@@ -28,6 +28,7 @@ export default function GaleriePage() {
 
   const photos = (galerieItems ?? []).filter((i) => i.type === "photo");
   const videos = (galerieItems ?? []).filter((i) => i.type === "video");
+  const spectaclesAvecVideo = (spectacles ?? []).filter((s) => s.lienVideo);
 
   const CATEGORIES_PHOTO = ["Auditions", "Répétitions", "Vie de la troupe", "Divers"] as const;
 
@@ -356,6 +357,74 @@ export default function GaleriePage() {
                             color: "var(--ink-muted)",
                           }}>
                             {video.categorie} · {video.date}
+                          </div>
+                        </div>
+                      </div>
+                    </a>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Vidéos des spectacles (lienVideo depuis fiches admin) */}
+          {spectaclesAvecVideo.length > 0 && (
+            <div style={{ marginBottom: 64 }}>
+              <h2 style={{
+                fontFamily: "var(--font-abril, 'Abril Fatface', serif)",
+                fontWeight: 400,
+                fontSize: "1.75rem",
+                color: "var(--ink)",
+                margin: "0 0 24px",
+              }}>
+                Nos spectacles
+              </h2>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 20 }}>
+                {spectaclesAvecVideo.map((spectacle) => {
+                  const ytId = spectacle.lienVideo ? getYoutubeId(spectacle.lienVideo) : null;
+                  return (
+                    <a key={spectacle._id} href={spectacle.lienVideo ?? "#"} target="_blank" rel="noopener noreferrer"
+                      style={{ textDecoration: "none", display: "block" }}>
+                      <div style={{
+                        background: "var(--white)",
+                        border: "1px solid var(--sand)",
+                        borderRadius: 16,
+                        overflow: "hidden",
+                        boxShadow: "0 4px 16px rgba(0,0,0,0.06)",
+                      }}>
+                        <div style={{ position: "relative", aspectRatio: "16/9", background: "var(--ink)" }}>
+                          {ytId ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img
+                              src={`https://img.youtube.com/vi/${ytId}/mqdefault.jpg`}
+                              alt={spectacle.titre}
+                              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                            />
+                          ) : spectacle.imageUrl ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img src={spectacle.imageUrl} alt={spectacle.titre}
+                              style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                          ) : (
+                            <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                              <span style={{ fontSize: "3rem", opacity: 0.4 }}>{spectacle.emoji}</span>
+                            </div>
+                          )}
+                          <div style={{
+                            position: "absolute", inset: 0,
+                            display: "flex", alignItems: "center", justifyContent: "center",
+                            background: "rgba(0,0,0,0.2)",
+                          }}>
+                            <div style={{ width: 48, height: 48, borderRadius: "50%", background: "var(--brick)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                              <span style={{ color: "white", fontSize: "1.2rem", marginLeft: 3 }}>▶</span>
+                            </div>
+                          </div>
+                        </div>
+                        <div style={{ padding: "14px 18px" }}>
+                          <div style={{ fontFamily: "var(--font-abril, 'Abril Fatface', serif)", fontWeight: 400, fontSize: "1rem", color: "var(--ink)", marginBottom: 4 }}>
+                            {spectacle.titre}
+                          </div>
+                          <div style={{ fontFamily: "var(--font-nunito, 'Nunito Sans', sans-serif)", fontSize: "0.75rem", color: "var(--ink-muted)" }}>
+                            {spectacle.saison}
                           </div>
                         </div>
                       </div>
