@@ -38,21 +38,20 @@ Convex agent skills for common tasks can be installed by running
 | v2 | `f51a1b0e-cce0-4d60-b55c-f4a38736c3d8` |
 | v3 | `475ae4ed-8f57-41fa-89c7-fbd8f3a108e8` |
 
-Pour gérer les déploiements Netlify (env vars, builds, logs), utiliser le skill `deploy-netlify` :
-- CLI authentifié en tant que `b.declercq@keolease.fr`
-- Cibler un site via `/tmp/netlify-<nom>/.netlify/state.json` avec le bon ID
+Pour déployer, utiliser `--site <id>` (le projet est lié à v1 par défaut) :
+```bash
+netlify deploy --build --prod                                               # v1
+netlify deploy --build --prod --site f51a1b0e-cce0-4d60-b55c-f4a38736c3d8  # v2
+netlify deploy --build --prod --site 475ae4ed-8f57-41fa-89c7-fbd8f3a108e8  # v3
+```
 
 ### Git push
 
-`git push` échoue avec HTTP 400 sur ce repo. Utiliser l'API GitHub via `gh` :
+`git push` fonctionne en général directement. Si HTTP 400, fallback :
 ```bash
-gh api --method POST repos/BASS2KLER/acap-cote-coulisse/git/refs \
-  -f ref="refs/heads/<branche>" -f sha="$(git rev-parse HEAD)"
-# ou PATCH pour mettre à jour une branche existante
 gh api --method PATCH repos/BASS2KLER/acap-cote-coulisse/git/refs/heads/<branche> \
-  -f sha="$(git rev-parse HEAD)"
+  -f sha="$(git rev-parse <branche>)"
 ```
-> Note : `git push` direct fonctionne parfois (testé OK en mai 2026). Essayer d'abord, fallback vers gh API si HTTP 400.
 
 ### Variables d'env Netlify (toutes variantes)
 
@@ -60,4 +59,27 @@ gh api --method PATCH repos/BASS2KLER/acap-cote-coulisse/git/refs/heads/<branche
 NEXT_PUBLIC_CONVEX_URL=https://insightful-frog-410.convex.cloud
 NEXT_PUBLIC_CONVEX_SITE_URL=https://insightful-frog-410.convex.site
 ADMIN_PASSWORD=<voir .env.local>
+GMAIL_USER=keolease@keolease.fr
+GMAIL_APP_PASSWORD=qfmu sucq wtxt nyng
+CONTACT_TO=lacap95@free.fr
 ```
+
+### Tables Convex (mai 2026)
+
+`spectacles` · `membres` · `actualites` · `galerie` · `reservations`
+
+**Déployer le schéma Convex en prod :**
+```bash
+CONVEX_DEPLOYMENT="prod:insightful-frog-410" npx convex deploy --yes
+```
+
+### Fonctionnalités admin
+
+| Section | Route | Description |
+|---------|-------|-------------|
+| Tableau de bord | `/admin` | Actions rapides |
+| Spectacles | `/admin/spectacles` | CRUD + upload affiche + galerie photos |
+| Réservations | `/admin/reservations` | Gestion places par représentation, export/impression |
+| La troupe | `/admin/membres` | CRUD membres |
+| Actualités | `/admin/actualites` | CRUD articles |
+| Galerie | `/admin/galerie` | Upload photos + vidéos YouTube + archives 2009-2011 |
